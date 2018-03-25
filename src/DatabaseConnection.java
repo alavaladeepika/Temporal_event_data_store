@@ -60,8 +60,8 @@ public class DatabaseConnection{
     
     public Map<String,String> getColumns(String tableName) {
     	Map<String,String> ColumnNames = new HashMap<String,String>();
-    	String query = "select COLUMN_NAME, DATA_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
-    			+ "and TABLE_NAME = ? and COLUMN_KEY!='PRI' and DATA_TYPE!='enum'";
+    	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
+    			+ "and TABLE_NAME = ? and COLUMN_KEY!='PRI'";
 		
     	try {
     		statement = connection.prepareStatement(query);
@@ -71,12 +71,8 @@ public class DatabaseConnection{
     		
     		while(resultSet.next()) {
     			String key = resultSet.getString("COLUMN_NAME"); 
-    			String value = resultSet.getString("DATA_TYPE");
+    			String value = resultSet.getString("COLUMN_TYPE");
     			
-    			//Assuming the lengths of the strings doesn't exceed 20
-    			if(value.equals("varchar")) { 
-    				value = value + "(20)";
-    			}
     			ColumnNames.put(key,value);
         	}
     	}
@@ -88,7 +84,7 @@ public class DatabaseConnection{
     }
     
     public ArrayList<String> getPrimaryKey(String table) {
-    	String query = "select COLUMN_NAME, DATA_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
+    	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
     			+ "and TABLE_NAME = ? and COLUMN_KEY = 'PRI'";
 		ArrayList<String> pk_and_type = new ArrayList<String>();
     	
@@ -100,7 +96,7 @@ public class DatabaseConnection{
     		
     		while(resultSet.next()) {
     			pk_and_type.add(resultSet.getString("COLUMN_NAME"));
-    			pk_and_type.add(resultSet.getString("DATA_TYPE"));
+    			pk_and_type.add(resultSet.getString("COLUMN_TYPE"));
     			return pk_and_type;
         	}
     	}
