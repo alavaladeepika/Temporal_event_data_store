@@ -5,11 +5,12 @@ import java.util.Scanner;
 
 //Initial window
 public class TemporalWelcome{
+	String username, pwd;
 	DatabaseConnection connection;
 	Scanner sc = new Scanner(System.in);
 	String schema;
 	ArrayList<String> TempTables = new ArrayList<String>();
-	Map<String, Map<String,String> > TempColumnNames = new HashMap<String, Map<String, String> >();
+	Map<String, Map<String,String> > TempColumnNames = new HashMap<String, Map<String,String> >();
 	
 	public static void main(String[] args){
 		TemporalWelcome tempDB = new TemporalWelcome();
@@ -18,6 +19,10 @@ public class TemporalWelcome{
 		tempDB.chooseTempTables();
 		tempDB.chooseTempColumns();
 		
+		tempDB.connection.closeConnection(); //closing the database connection
+		
+		tempDB.staticTemporalize();
+		
 		return;
 	}
 	
@@ -25,12 +30,12 @@ public class TemporalWelcome{
 		System.out.println("Welcome to Temporal Event Data Store\n"
 				+ "Please Login into the Database\n");
 		System.out.print("Enter Username : ");
-		String uname = sc.nextLine();
+		username = sc.nextLine();
 		System.out.print("Enter Password : ");
-		String pwd = sc.nextLine();
+		pwd = sc.nextLine();
 		System.out.print("Provide name of the schema : ");
 		schema = sc.nextLine();
-		connection = new DatabaseConnection(uname,pwd,schema);
+		connection = new DatabaseConnection(username,pwd,schema);
 		return;
 	}
 	
@@ -45,7 +50,7 @@ public class TemporalWelcome{
 		System.out.println("0 : Exit");
 		
 		int choice = 1;
-		System.out.print("Select the tables (the no:s opposite to the names) "
+		System.out.println("Select the tables (the no:s opposite to the names) "
 				+ "you want to temporalise : ");
 		while(choice != 0) {
 			choice = sc.nextInt();
@@ -72,8 +77,8 @@ public class TemporalWelcome{
 			}
 			System.out.println("exit");
 			
-			System.out.print("Select the column names of '" +
-							  key + "'you want to temporalise : ");
+			System.out.println("Select the column names of '" +
+							  key + "' you want to temporalise : ");
 			
 			String tempCol = "Start";
 			Map<String,String> tempCols = new HashMap<String,String>();
@@ -86,6 +91,10 @@ public class TemporalWelcome{
 			TempColumnNames.put(key, tempCols);
 		}
 		return;
+	}
+	
+	public void staticTemporalize() {
+		 Static_Temporalize.Execute(username, pwd, schema, TempColumnNames);
 	}
 	
 }
