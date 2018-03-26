@@ -16,8 +16,7 @@ public class TablesFrame {
 	private JButton btnNext;
 	private JRadioButton[] jRadioButton;
 	ArrayList<String> displayTables;
-	Map<String, String> colNames = new HashMap<String,String>();
-	Map<String,Map<String,String>> tempCol = new HashMap<String,Map<String,String>>();
+	ArrayList<String> selTables = new ArrayList<String>();
 	/**
 	 * Create the application.
 	 */
@@ -34,12 +33,11 @@ public class TablesFrame {
 				for(int i=displayTables.size()-1;i>=0;i--) {
 					boolean isSelected = jRadioButton[i].isSelected();
 					if(isSelected) {
-						colNames = DatabaseConnection.getInstance().getColumns(displayTables.get(i));
-						ColumnsFrame c = new ColumnsFrame(displayTables.get(i),colNames);
-						tempCol.put(displayTables.get(i),c.getTempColumns());
+						selTables.add(displayTables.get(i));
 					}
 				}
-				Static_Temporalize.Execute(tempCol);
+				@SuppressWarnings("unused")
+				ColumnsFrame c = new ColumnsFrame(selTables);
 			}
 		});	
 	}
@@ -50,7 +48,7 @@ public class TablesFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setVisible(true);
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblNewLabel = new JLabel("Select the tables you want to temporalise :");
@@ -79,9 +77,9 @@ public class TablesFrame {
 		);
 		frame.getContentPane().setLayout(groupLayout);
 
-		int x=50, y=50, width=200, height=50; //choose whatever you want
+		int x=50, y=50, width=200, height=60; //choose whatever you want
         jRadioButton = new JRadioButton[displayTables.size()];
-        for(int i=0; i<displayTables.size(); i++, y+=30) {
+        for(int i=0; i<displayTables.size(); i++, y+=40) {
             jRadioButton[i] = new JRadioButton(displayTables.get(i));
             jRadioButton[i].setBounds(x, y, width, height);
             frame.getContentPane().add(jRadioButton[i]);

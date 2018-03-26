@@ -120,10 +120,43 @@ public class DatabaseConnection{
     	return null;
     }
     
-    public String create_table(String query) {
+    public void copy_data(String table,String hist_table,String pk,Map<String, String> col) {
+		String query = "INSERT INTO " + hist_table + "(" + pk;
+				
+		for(Map.Entry<String,String> entry:col.entrySet()) {
+			query += "," + entry.getKey();
+		}
+		query += ") SELECT " + pk;
+		for(Map.Entry<String,String> entry:col.entrySet()) {
+				query += "," + entry.getKey();
+		}
+		query += " FROM "+ table;
+		//System.out.println(query);
+		
+		try {
+			statement = connection.prepareStatement(query);
+			statement.executeUpdate();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public String create_table(String table,String hist_table,ArrayList<String> pk,Map<String, String> col) {
+    	String query = "CREATE TABLE IF NOT EXISTS " + hist_table + "(" + pk.get(0) + " " + pk.get(1);
+		for(Map.Entry<String,String> entry:col.entrySet()) {
+			query += "," + entry.getKey() + " " + entry.getValue();
+		}
+		query += ", START_DATE DATETIME DEFAULT NOW(), END_DATE DATETIME, PRIMARY KEY(" + pk.get(0);
+    	for(Map.Entry<String,String> entry:col.entrySet()) {
+			query += "," + entry.getKey();
+		}
+		query += ",START_DATE))";
+		//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
+    		copy_data(table,hist_table,pk.get(0),col);
     		return "success";
     	}
     	catch(SQLException e){

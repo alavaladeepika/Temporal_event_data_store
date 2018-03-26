@@ -67,7 +67,7 @@ public class WelcomeFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblNewLabel = new JLabel("Welcome to Temporal Event Data Store");
@@ -94,9 +94,6 @@ public class WelcomeFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(86)
-							.addComponent(lblNewLabel))
-						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(33)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
@@ -113,15 +110,18 @@ public class WelcomeFrame {
 									.addComponent(schema, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(127)
-							.addComponent(btnSubmit)))
-					.addContainerGap(87, Short.MAX_VALUE))
+							.addComponent(btnSubmit))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(232)
+							.addComponent(lblNewLabel)))
+					.addContainerGap(491, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(5)
+					.addGap(27)
 					.addComponent(lblNewLabel)
-					.addGap(50)
+					.addGap(28)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblUsername)
 						.addComponent(username, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -133,7 +133,7 @@ public class WelcomeFrame {
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblSchemaName)
 						.addComponent(schema, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 759, Short.MAX_VALUE)
 					.addComponent(btnSubmit)
 					.addGap(53))
 		);
