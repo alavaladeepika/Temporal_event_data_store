@@ -189,6 +189,7 @@ public class DatabaseConnection{
     		query += "," + entry.getKey() + "= NEW." + entry.getKey();
     	}
     	query += "; END";
+    	
     	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
