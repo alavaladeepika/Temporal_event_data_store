@@ -37,16 +37,14 @@ public class MenuFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		btnInsert = new JButton("INSERT");
-		
 	    btnUpdate = new JButton("UPDATE");
-		
 		btnDelete = new JButton("DELETE");
-		
 		btnTemporalOperators = new JButton("TEMPORAL OPERATORS");
+
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)

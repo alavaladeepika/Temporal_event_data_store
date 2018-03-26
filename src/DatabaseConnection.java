@@ -165,13 +165,68 @@ public class DatabaseConnection{
     	return "failure";
     }
     
-    public void add_FK_constraint(String ref_table,String table,String pk) {
+    public void onInsert_Trigger(String table,String hist_table,String pk,Map<String,String> col) {
+    	String query = "create trigger after_" + table + "_insert after insert on " +
+    			table + " for each row begin insert into " + hist_table + " set " + pk + "= NEW." + pk;
+    	for(Map.Entry<String,String> entry:col.entrySet()) {
+    		query += "," + entry.getKey() + "= NEW." + entry.getKey();
+    	}
+    	query += "; END";
+    	//System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.execute();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    public void onUpdate_Trigger(String table,String hist_table,String pk,Map<String,String> col) {
+    	String query = "create trigger after_" + table + "_insert after insert on " +
+    			table + " for each row begin insert into " + hist_table + " set " + pk + "= NEW." + pk;
+    	for(Map.Entry<String,String> entry:col.entrySet()) {
+    		query += "," + entry.getKey() + "= NEW." + entry.getKey();
+    	}
+    	query += "; END";
+    	//System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.execute();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    }
+
+	public void onDelete_Trigger(String table,String hist_table,String pk,Map<String,String> col) {
+		String query = "create trigger after_" + table + "_insert after insert on " +
+    			table + " for each row begin insert into " + hist_table + " set " + pk + "= NEW." + pk;
+    	for(Map.Entry<String,String> entry:col.entrySet()) {
+    		query += "," + entry.getKey() + "= NEW." + entry.getKey();
+    	}
+    	query += "; END";
+    	//System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.execute();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+	}
+    
+    public void add_FK_constraint(String ref_table,String table,String pk,Map<String,String> col) {
     	String query = "ALTER TABLE " + table + " ADD CONSTRAINT FOREIGN KEY(" + pk 
     			+ ") REFERENCES " + ref_table + "(" + pk + ");";
     	try {
     		//System.out.println(query);
     		statement = connection.prepareStatement(query);
     		statement.execute();
+    		
+    		onInsert_Trigger(ref_table,table,pk,col);
+    		onUpdate_Trigger(ref_table,table,pk,col);
+    		onDelete_Trigger(ref_table,table,pk,col);
     	}
     	catch(SQLException e){
     		e.printStackTrace();
