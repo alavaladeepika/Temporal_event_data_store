@@ -27,20 +27,8 @@ public class Static_Temporalize {
 	
 	public String create_hist_table(String table, ArrayList<String> pk, Map<String, String> col) {
 		String hist_table = "hist_" + table;
-		String query = "CREATE TABLE IF NOT EXISTS " + hist_table + "(" + pk.get(0) + " " + pk.get(1);
-		for(Map.Entry<String,String> entry:col.entrySet()) {
-			query += "," + entry.getKey() + " " + entry.getValue();
-		}
-		query += ", START_DATE DATETIME, END_DATE DATETIME, PRIMARY KEY(" + pk.get(0);
 		
-		
-		for(Map.Entry<String,String> entry:col.entrySet()) {
-			query += "," + entry.getKey();
-		}
-		
-		query += ", START_DATE));";
-		
-		if(DatabaseConnection.getInstance().create_table(query).equals("success")) {
+		if(DatabaseConnection.getInstance().create_table(table,hist_table,pk,col).equals("success")) {
 			DatabaseConnection.getInstance().add_FK_constraint(table,hist_table,pk.get(0));
 			return hist_table;
 		}
