@@ -3,15 +3,18 @@ import java.util.*;
 
 //For opening the Database Connection
 public class DatabaseConnection{
+	private static DatabaseConnection instance;
+	
 	java.sql.PreparedStatement statement=null;
     ResultSet resultSet;
     Connection connection = null;
-    //String query = null;
-    String schema_name = null;
 
-    public DatabaseConnection(String uname, String pwd, String schema){
-    	String user = uname;
-        String password = pwd;
+    public static String schema;
+    public static String username;
+    public static String password;
+
+    private DatabaseConnection(){
+    	
         connection = null;
 
         try{
@@ -23,11 +26,10 @@ public class DatabaseConnection{
             System.out.println("Driver Not Found: " + e);
         }
 
-        schema_name = schema;
         String url = "jdbc:mysql://127.0.0.1:3306/"+schema+"?useSSL=true";
         try
         {
-            connection = (Connection)DriverManager.getConnection(url, user, password);
+            connection = (Connection)DriverManager.getConnection(url, username, password);
             System.out.println("Successfully Connected to Database");
             
         }
@@ -38,13 +40,25 @@ public class DatabaseConnection{
 
     }
     
+    public static DatabaseConnection getInstance() {
+    	return instance;
+    }
+    
+    public static DatabaseConnection getInstance(String user, String pwd, String schema_name) {
+    	username = user;
+    	password = pwd;
+    	schema = schema_name;
+    	instance = new DatabaseConnection();
+    	return instance;
+    }
+    
     public ArrayList<String> getTables() {
     	ArrayList<String> tableNames = new ArrayList<String>();
     	String query = "select TABLE_NAME FROM information_schema.TABLES where TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = ?";
 		
     	try {
     		statement = connection.prepareStatement(query);
-    		statement.setString(1,schema_name);
+    		statement.setString(1,schema);
     		resultSet = statement.executeQuery();
     		
     		while(resultSet.next()) {
@@ -65,7 +79,7 @@ public class DatabaseConnection{
 		
     	try {
     		statement = connection.prepareStatement(query);
-    		statement.setString(1,schema_name);
+    		statement.setString(1,schema);
     		statement.setString(2,tableName);
     		resultSet = statement.executeQuery();
     		
@@ -90,7 +104,7 @@ public class DatabaseConnection{
     	
     	try {
     		statement = connection.prepareStatement(query);
-    		statement.setString(1,schema_name);
+    		statement.setString(1,schema);
     		statement.setString(2,table);
     		resultSet = statement.executeQuery();
     		

@@ -3,29 +3,23 @@ import java.sql.*;
 
 //Static Mapping of the columns that has to be temporalized
 public class Static_Temporalize {
-	String username,password,schema_name;
 	java.sql.PreparedStatement statement=null;
     ResultSet resultSet;
-    DatabaseConnection dbCon;
 	Map<String, Map<String, String>> temporalize;
 	ArrayList<String> hist_tables;
 	
-	Static_Temporalize(String user, String pwd, String schema, Map<String, Map<String, String>> temp){
-		username = user;
-		password = pwd;
-		schema_name = schema;
+	Static_Temporalize(Map<String, Map<String, String>> temp){
 		temporalize = temp;
 		hist_tables = new ArrayList<String>();
 	}
 	
-	public static void Execute(String user, String pwd, String schema, Map<String, Map<String, String>> t) {
-		Static_Temporalize temp = new Static_Temporalize(user, pwd, schema, t);
-		temp.dbCon = new DatabaseConnection(user,pwd,schema);
+	public static void Execute(Map<String, Map<String, String>> t) {
+		Static_Temporalize temp = new Static_Temporalize(t);
 		
 		for(Map.Entry<String, Map<String,String> > entry:temp.temporalize.entrySet()) {
 			String key = entry.getKey();
 			Map<String, String> value = entry.getValue();
-			ArrayList<String> PK_and_type = temp.dbCon.getPrimaryKey(key);
+			ArrayList<String> PK_and_type = DatabaseConnection.getInstance().getPrimaryKey(key);
 			String new_hist_table = temp.create_hist_table(key,PK_and_type,value);
 			if(new_hist_table!=null)	temp.hist_tables.add(new_hist_table);
 		}
@@ -46,10 +40,8 @@ public class Static_Temporalize {
 		
 		query += ", START_DATE));";
 		
-		//System.out.println(query);
-		
-		if(dbCon.create_table(query).equals("success")) {
-			dbCon.add_FK_constraint(table,hist_table,pk.get(0));
+		if(DatabaseConnection.getInstance().create_table(query).equals("success")) {
+			DatabaseConnection.getInstance().add_FK_constraint(table,hist_table,pk.get(0));
 			return hist_table;
 		}
 		
