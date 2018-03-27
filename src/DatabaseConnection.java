@@ -97,10 +97,10 @@ public class DatabaseConnection{
     	return ColumnNames;
     }
     
-    public ArrayList<String> getPrimaryKey(String table) {
+    public Map<String,String> getPrimaryKey(String table) {
     	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
     			+ "and TABLE_NAME = ? and COLUMN_KEY = 'PRI'";
-		ArrayList<String> pk_and_type = new ArrayList<String>();
+		Map<String,String> pk_and_type = new HashMap<String,String>();
     	
     	try {
     		statement = connection.prepareStatement(query);
@@ -109,24 +109,41 @@ public class DatabaseConnection{
     		resultSet = statement.executeQuery();
     		
     		while(resultSet.next()) {
-    			pk_and_type.add(resultSet.getString("COLUMN_NAME"));
-    			pk_and_type.add(resultSet.getString("COLUMN_TYPE"));
-    			return pk_and_type;
+    			pk_and_type.put(resultSet.getString("COLUMN_NAME"),resultSet.getString("COLUMN_TYPE"));
         	}
     	}
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-    	return null;
+    	return pk_and_type;
     }
     
-    public void copy_data(String table,String hist_table,String pk,Map<String, String> col) {
-		String query = "INSERT INTO " + hist_table + "(" + pk;
-				
+    public void copy_data(String table,String hist_table,Map<String,String> pk,Map<String, String> col) {
+		String query = "INSERT INTO " + hist_table + "(";
+		int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey();
+    		}
+    	}
 		for(Map.Entry<String,String> entry:col.entrySet()) {
 			query += "," + entry.getKey();
 		}
-		query += ") SELECT " + pk;
+		query += ") SELECT ";
+		i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey();
+    		}
+    	}
 		for(Map.Entry<String,String> entry:col.entrySet()) {
 				query += "," + entry.getKey();
 		}
@@ -142,12 +159,32 @@ public class DatabaseConnection{
 		}
     }
     
-    public String create_table(String table,String hist_table,ArrayList<String> pk,Map<String, String> col) {
-    	String query = "CREATE TABLE IF NOT EXISTS " + hist_table + "(" + pk.get(0) + " " + pk.get(1);
+    public String create_table(String table,String hist_table,Map<String,String> pk,Map<String, String> col) {
+    	String query = "CREATE TABLE IF NOT EXISTS " + hist_table + "(" ;
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + " " + entry.getValue();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey() + " " + entry.getValue();
+    		}
+    	}
 		for(Map.Entry<String,String> entry:col.entrySet()) {
 			query += "," + entry.getKey() + " " + entry.getValue();
 		}
-		query += ", START_DATE DATETIME DEFAULT NOW(), END_DATE DATETIME, PRIMARY KEY(" + pk.get(0);
+		query += ", START_DATE DATETIME DEFAULT NOW(), END_DATE DATETIME, PRIMARY KEY(";
+		i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey();
+    		}
+    	}
     	for(Map.Entry<String,String> entry:col.entrySet()) {
 			query += "," + entry.getKey();
 		}
@@ -156,7 +193,7 @@ public class DatabaseConnection{
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
-    		copy_data(table,hist_table,pk.get(0),col);
+    		copy_data(table,hist_table,pk,col);
     		return "success";
     	}
     	catch(SQLException e){
@@ -165,9 +202,19 @@ public class DatabaseConnection{
     	return "failure";
     }
     
-    public void onInsert_Trigger(String table,String hist_table,String pk,Map<String,String> col) {
+    public void onInsert_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
     	String query = "create trigger after_" + table + "_insert after insert on " +
-    			table + " for each row begin insert into " + hist_table + " set " + pk + "= NEW." + pk;
+    			table + " for each row begin insert into " + hist_table + " set " ;
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "= NEW." + entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey() + "= NEW." + entry.getKey();
+    		}
+    	}
     	for(Map.Entry<String,String> entry:col.entrySet()) {
     		query += "," + entry.getKey() + "= NEW." + entry.getKey();
     	}
@@ -182,13 +229,35 @@ public class DatabaseConnection{
     	}
     }
     
-    public void onUpdate_Trigger(String table,String hist_table,String pk,Map<String,String> col) {
-    	String query = "create trigger after_" + table + "_insert after insert on " +
-    			table + " for each row begin insert into " + hist_table + " set " + pk + "= NEW." + pk;
+    public void onUpdate_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+    	String query = "create trigger after_" + table + "_update after update on " +
+    			table + " for each row begin update "+ hist_table + " set END_DATE = NOW() where "; 
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "= NEW." + entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey() + "= NEW." + entry.getKey();
+    		}
+    	}
+    	query += " AND END_DATE is NULL; insert into " + hist_table + " set ";
+    	i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "= NEW." + entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey() + "= NEW." + entry.getKey();
+    		}
+    	}
     	for(Map.Entry<String,String> entry:col.entrySet()) {
     		query += "," + entry.getKey() + "= NEW." + entry.getKey();
     	}
     	query += "; END";
+    	
     	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
@@ -199,13 +268,21 @@ public class DatabaseConnection{
     	}
     }
 
-	public void onDelete_Trigger(String table,String hist_table,String pk,Map<String,String> col) {
-		String query = "create trigger after_" + table + "_insert after insert on " +
-    			table + " for each row begin insert into " + hist_table + " set " + pk + "= NEW." + pk;
-    	for(Map.Entry<String,String> entry:col.entrySet()) {
-    		query += "," + entry.getKey() + "= NEW." + entry.getKey();
+	public void onDelete_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+		String query = "create trigger after_" + table + "_delete after delete on " +
+    			table + " for each row begin update " + hist_table + " set END_DATE = NOW()"
+    					+ " where ";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "= OLD." + entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey() + "= OLD." + entry.getKey();
+    		}
     	}
-    	query += "; END";
+    	query += " and END_DATE is NULL; END";
     	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
@@ -216,9 +293,30 @@ public class DatabaseConnection{
     	}
 	}
     
-    public void add_FK_constraint(String ref_table,String table,String pk,Map<String,String> col) {
-    	String query = "ALTER TABLE " + table + " ADD CONSTRAINT FOREIGN KEY(" + pk 
-    			+ ") REFERENCES " + ref_table + "(" + pk + ");";
+    public void add_FK_constraint(String ref_table,String table,Map<String,String> pk,Map<String,String> col) {
+    	String query = "ALTER TABLE " + table + " ADD CONSTRAINT FOREIGN KEY(";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey();
+    			}
+    	}
+    	query += ") REFERENCES " + ref_table + "(" ;
+    	i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey();
+    			}
+    	}
+    	query += ");";
     	try {
     		//System.out.println(query);
     		statement = connection.prepareStatement(query);
