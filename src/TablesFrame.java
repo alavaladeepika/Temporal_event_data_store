@@ -56,24 +56,24 @@ public class TablesFrame {
 		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
+			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(291, Short.MAX_VALUE)
-					.addComponent(btnNext)
-					.addGap(22))
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
 					.addGap(55)
 					.addComponent(lblNewLabel)
-					.addContainerGap(87, Short.MAX_VALUE))
+					.addContainerGap(637, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+					.addContainerGap(873, Short.MAX_VALUE)
+					.addComponent(btnNext)
+					.addGap(61))
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
 					.addGap(35)
 					.addComponent(lblNewLabel)
-					.addPreferredGap(ComponentPlacement.RELATED, 182, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 887, Short.MAX_VALUE)
 					.addComponent(btnNext)
-					.addGap(43))
+					.addGap(38))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 

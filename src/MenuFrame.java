@@ -20,6 +20,7 @@ public class MenuFrame {
 
 	private JFrame frame;
 	private JButton btnInsert;
+	private JButton btnSelect;
 	private JButton btnUpdate;
 	private JButton btnDelete;
 	private JButton btnTemporalOperators;
@@ -44,6 +45,7 @@ public class MenuFrame {
 	    btnUpdate = new JButton("UPDATE");
 		btnDelete = new JButton("DELETE");
 		btnTemporalOperators = new JButton("TEMPORAL OPERATORS");
+		btnSelect = new JButton("SELECT");
 
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
@@ -52,31 +54,33 @@ public class MenuFrame {
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(162)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnUpdate)
-								.addComponent(btnDelete)
-								.addComponent(btnInsert)))
+							.addComponent(btnTemporalOperators))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(112)
-							.addComponent(btnTemporalOperators)))
-					.addContainerGap(143, Short.MAX_VALUE))
+							.addGap(207)
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+								.addComponent(btnDelete)
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+									.addComponent(btnUpdate)
+									.addComponent(btnSelect)
+									.addComponent(btnInsert)))))
+					.addContainerGap(643, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(52)
+					.addGap(101)
 					.addComponent(btnInsert)
-					.addGap(29)
+					.addGap(27)
+					.addComponent(btnSelect)
+					.addGap(30)
 					.addComponent(btnUpdate)
-					.addGap(26)
+					.addGap(30)
 					.addComponent(btnDelete)
 					.addGap(29)
 					.addComponent(btnTemporalOperators)
-					.addContainerGap(64, Short.MAX_VALUE))
+					.addContainerGap(658, Short.MAX_VALUE))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		frame.setVisible(true);
-	}
-	private static void addPopup(Component component, final JPopupMenu popup) {
 	}
 }
