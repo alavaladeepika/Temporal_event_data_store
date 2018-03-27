@@ -25,12 +25,39 @@ public class MenuFrame {
 	private JButton btnDelete;
 	private JButton btnTemporalOperators;
 	public static Map<String,Map<String,String>> TempTables;
+	CRUD_TablesFrame tFrame;
 
 	/**
 	 * Create the application.
 	 */
 	public MenuFrame() {
 		initialize();
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tFrame = new CRUD_TablesFrame("insert"); 
+			}
+		});
+		btnSelect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tFrame = new CRUD_TablesFrame("select"); 
+			}
+		});
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tFrame = new CRUD_TablesFrame("update"); 
+			}
+		});
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tFrame = new CRUD_TablesFrame("delete"); 
+			}
+		});
+		btnTemporalOperators.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO : Add code
+			}
+		});
+		
 	}
 
 	/**
@@ -46,39 +73,39 @@ public class MenuFrame {
 		btnDelete = new JButton("DELETE");
 		btnTemporalOperators = new JButton("TEMPORAL OPERATORS");
 		btnSelect = new JButton("SELECT");
-
+		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap(438, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(162)
-							.addComponent(btnTemporalOperators))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(207)
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 								.addComponent(btnDelete)
+								.addComponent(btnSelect)
 								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-									.addComponent(btnUpdate)
-									.addComponent(btnSelect)
-									.addComponent(btnInsert)))))
-					.addContainerGap(643, Short.MAX_VALUE))
+									.addComponent(btnInsert)
+									.addComponent(btnUpdate)))
+							.addGap(442))
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addComponent(btnTemporalOperators)
+							.addGap(367))))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(101)
+					.addGap(199)
 					.addComponent(btnInsert)
-					.addGap(27)
+					.addGap(65)
 					.addComponent(btnSelect)
-					.addGap(30)
-					.addComponent(btnUpdate)
-					.addGap(30)
+					.addGap(77)
 					.addComponent(btnDelete)
-					.addGap(29)
+					.addPreferredGap(ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+					.addComponent(btnUpdate)
+					.addGap(104)
 					.addComponent(btnTemporalOperators)
-					.addContainerGap(658, Short.MAX_VALUE))
+					.addGap(49))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		frame.setVisible(true);

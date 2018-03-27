@@ -18,7 +18,7 @@ public class DatabaseConnection{
         connection = null;
 
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Driver Found");
         }
 
@@ -331,6 +331,35 @@ public class DatabaseConnection{
     	}
     }
     
+    public void insertRow(Map<String,String> row,String table) {
+		String query = "INSERT INTO " + table +"(";
+    	int i=0;
+    	ArrayList<String> values = new ArrayList<String>();
+    	for(Map.Entry<String,String> entry:row.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey();
+    		}
+    		values.add(entry.getValue());
+    	}
+    	query += ")  VALUES("+values.get(0);
+    	for(int j=1;j<values.size();j++) {
+    		query += "," + values.get(j);
+    	}
+    	query += ")";
+    	System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.executeUpdate();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    }
+    
     public void closeConnection() {
     	try {
     		if(connection!=null) {
@@ -341,4 +370,5 @@ public class DatabaseConnection{
     		s.printStackTrace();
     	}
     }
+    
 }
