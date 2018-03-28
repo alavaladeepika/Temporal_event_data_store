@@ -20,15 +20,14 @@ public class CRUD_TablesFrame {
 	ButtonGroup group;
 	String selTable = null;
 	JRadioButton[] jRadioButton;
+	public static Map<String,String> select_col_Names;
 	
-	
-
 	/**
 	 * Create the application.
 	 */
 	public CRUD_TablesFrame(String c) {
 		choice = c;
-		displayTables = DatabaseConnection.getInstance().getTables();
+		displayTables = WelcomeFrame.transactTables;
 		
 		initialize();
 		
@@ -46,16 +45,17 @@ public class CRUD_TablesFrame {
 				}
 				 switch(choice) {
 				 	case "insert": 
-				 		@SuppressWarnings("unused") InsertFrame i = new InsertFrame(selTable); 
+				 		@SuppressWarnings("unused") InsertFrame i = new InsertFrame(selTable,DatabaseConnection.getInstance().getInsert_UpdateColumns(selTable)); 
 				 		break;
 				 	case "delete":
-				 		@SuppressWarnings("unused") DeleteFrame d= new DeleteFrame(selTable);
+				 		@SuppressWarnings("unused") CRUD_ColumnsFrame d= new CRUD_ColumnsFrame(selTable,choice,DatabaseConnection.getInstance().getSelect_DeleteColumns(selTable));
 				 		break;
 				 	case "update":
-				 		@SuppressWarnings("unused") UpdateFrame u = new UpdateFrame(selTable);
+				 		@SuppressWarnings("unused") CRUD_ColumnsFrame u = new CRUD_ColumnsFrame(selTable,choice,DatabaseConnection.getInstance().getInsert_UpdateColumns(selTable));
 				 		break;
 				 	case "select":
-				 		@SuppressWarnings("unused") SelectFrame s = new SelectFrame(selTable);
+				 		select_col_Names = DatabaseConnection.getInstance().getSelect_DeleteColumns(selTable);
+				 		@SuppressWarnings("unused") CRUD_ColumnsFrame s = new CRUD_ColumnsFrame(selTable,choice,select_col_Names);
 				 		break;
 				 	default:
 				 		
@@ -71,7 +71,7 @@ public class CRUD_TablesFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setVisible(true);
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JLabel lblNewLabel = new JLabel("Select the table to perform '" + choice +"' :");
 		btnNext = new JButton("Next");
@@ -101,10 +101,12 @@ public class CRUD_TablesFrame {
 		
 		
 		int x=50, y=50, width=200, height=60; //choose whatever you want
+		group = new ButtonGroup();
         jRadioButton = new JRadioButton[displayTables.size()];
         for(int i=0; i<displayTables.size(); i++, y+=40) {
             jRadioButton[i] = new JRadioButton(displayTables.get(i));
             jRadioButton[i].setBounds(x, y, width, height);
+            group.add(jRadioButton[i]);
             frame.getContentPane().add(jRadioButton[i]);
         }
 	}

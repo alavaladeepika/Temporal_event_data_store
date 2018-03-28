@@ -1,4 +1,3 @@
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -7,24 +6,22 @@ import java.util.*;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 public class InsertFrame {
 
 	private JFrame frame;
-	Map<String,String> colNames;
+	public static Map<String,String> colNames;
 	JTextField[] textFields;
 	JButton btnNext;
 	Map<String,String> modCol;
-
 	
 	/**
 	 * Create the application.
 	 */
-	public InsertFrame(String selTable) {
-		colNames = DatabaseConnection.getInstance().getColumns(selTable);
+	public InsertFrame(String selTable,Map<String,String> c) {
+		colNames = c;
 		
 		initialize();
 		btnNext.addActionListener(new ActionListener() {
@@ -51,33 +48,33 @@ public class InsertFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setVisible(true);
 		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblEnterValuesTo = new JLabel("Enter values to insert :");
+		JLabel lblEnterValuesTo = new JLabel("Enter values to 'insert' :");
 		
 		btnNext = new JButton("Next");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+					.addGap(26)
+					.addComponent(lblEnterValuesTo)
+					.addContainerGap(262, Short.MAX_VALUE))
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(710, Short.MAX_VALUE)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblEnterValuesTo)
-							.addGap(128))
-						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-							.addComponent(btnNext)
-							.addGap(43))))
+					.addContainerGap(352, Short.MAX_VALUE)
+					.addComponent(btnNext)
+					.addGap(32))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
+					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addPreferredGap(ComponentPlacement.RELATED, 605, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
 					.addComponent(btnNext)
-					.addGap(59))
+					.addGap(28))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		
@@ -88,16 +85,14 @@ public class InsertFrame {
 			JLabel lblCol = new JLabel(entry.getKey()+"("+entry.getValue()+") :");
 			lblCol.setBounds(x, y, width, height);
 			frame.getContentPane().add(lblCol);
-			
+			y+=40;
 			textFields[i] = new JTextField();
 			textFields[i].setColumns(10);
-            textFields[i].setBounds(x+150, y, width, height);
+            textFields[i].setBounds(x, y, width, height);
             
             frame.getContentPane().add(textFields[i]);
             y+=40;
             i++;
 		}
-		
-		
 	}
 }

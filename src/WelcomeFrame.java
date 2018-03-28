@@ -1,4 +1,5 @@
 import java.awt.EventQueue;
+import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,6 +24,7 @@ public class WelcomeFrame {
 	private String user;
 	private String pwd;
 	private String schema_name;
+	public static ArrayList<String> transactTables;
 
 	/**
 	 * Launch the application.
@@ -57,8 +59,10 @@ public class WelcomeFrame {
 				
 				window.frame.setVisible(false);
 				
+				WelcomeFrame.transactTables = DatabaseConnection.getInstance(user,pwd,schema_name).getTables();
 				@SuppressWarnings("unused")
-				TablesFrame t = new TablesFrame(DatabaseConnection.getInstance(user,pwd,schema_name).getTables());
+				TablesFrame t = new TablesFrame(transactTables);
+				
 			}
 		});
 	}

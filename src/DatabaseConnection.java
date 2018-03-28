@@ -18,7 +18,7 @@ public class DatabaseConnection{
         connection = null;
 
         try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             System.out.println("Driver Found");
         }
 
@@ -331,6 +331,58 @@ public class DatabaseConnection{
     	}
     }
     
+    public Map<String,String> getInsert_UpdateColumns(String tableName) {
+    	Map<String,String> ColumnNames = new HashMap<String,String>();
+    	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
+    			+ "and TABLE_NAME = ? and EXTRA!='auto_increment'";
+		
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.setString(1,schema);
+    		statement.setString(2,tableName);
+    		resultSet = statement.executeQuery();
+    		
+    		while(resultSet.next()) {
+    			String key = resultSet.getString("COLUMN_NAME"); 
+    			String value = resultSet.getString("COLUMN_TYPE");
+    			//System.out.println(key+value);
+    			
+    			ColumnNames.put(key,value);
+        	}
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	
+    	return ColumnNames;
+    }
+    
+    public Map<String,String> getSelect_DeleteColumns(String tableName) {
+    	Map<String,String> ColumnNames = new HashMap<String,String>();
+    	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
+    			+ "and TABLE_NAME = ?";
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.setString(1,schema);
+    		statement.setString(2,tableName);
+    		System.out.println(query);
+    		resultSet = statement.executeQuery();
+    		
+    		while(resultSet.next()) {
+    			String key = resultSet.getString("COLUMN_NAME"); 
+    			String value = resultSet.getString("COLUMN_TYPE");
+    			//System.out.println(key+value);
+    			
+    			ColumnNames.put(key,value);
+        	}
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	
+    	return ColumnNames;
+    }
+    
     public void insertRow(Map<String,String> row,String table) {
 		String query = "INSERT INTO " + table +"(";
     	int i=0;
@@ -345,12 +397,12 @@ public class DatabaseConnection{
     		}
     		values.add(entry.getValue());
     	}
-    	query += ")  VALUES("+values.get(0);
+    	query += ") VALUES('"+values.get(0);
     	for(int j=1;j<values.size();j++) {
-    		query += "," + values.get(j);
+    		query += "','" + values.get(j);
     	}
-    	query += ")";
-    	System.out.println(query);
+    	query += "')";
+    	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.executeUpdate();
@@ -358,6 +410,85 @@ public class DatabaseConnection{
     	catch(SQLException e){
     		e.printStackTrace();
     	}
+    }
+    
+    public void updateRow(Map<String,String> pk,Map<String,String> row,String table) {
+		String query = "UPDATE " + table +" SET ";
+		int i=0;
+    	for(Map.Entry<String,String> entry:row.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += "," + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	query += " WHERE ";
+    	i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	//System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.executeUpdate();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    public void deleteRow(Map<String,String> row,String table) {
+		String query = "DELETE FROM " + table +" WHERE ";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:row.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	//System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.executeUpdate();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    public ResultSet selectRows(Map<String,String> row,String table) {
+    	ResultSet result=null;
+		String query = "SELECT * FROM " + table +" WHERE ";
+		int i=0;
+    	for(Map.Entry<String,String> entry:row.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	//System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		result = statement.executeQuery();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	return result;
     }
     
     public void closeConnection() {
