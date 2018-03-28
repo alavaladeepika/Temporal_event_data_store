@@ -18,6 +18,7 @@ public class CRUD_ColumnsFrame {
 	private JButton btnNext;
 	JRadioButton[] jRadioButton;
 	String selTable;
+	private JButton btnMenu;
 
 	/**
 	 * Create the application.
@@ -57,6 +58,15 @@ public class CRUD_ColumnsFrame {
 			 }
 			}
 		});	
+		
+		btnMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				@SuppressWarnings("unused")
+				MenuFrame m = new MenuFrame();
+			}	
+				
+		});
 	}
 
 	/**
@@ -71,25 +81,31 @@ public class CRUD_ColumnsFrame {
 		btnNext = new JButton("Next");
 		
 		JLabel lblSelectTheColumns = new JLabel("Select the columns through which you want to '" + choice + "' from '" + selTable + "' :");
+		
+		btnMenu = new JButton("Menu");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-					.addContainerGap(311, Short.MAX_VALUE)
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(208)
+					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 621, Short.MAX_VALUE)
 					.addComponent(btnNext)
 					.addGap(22))
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblSelectTheColumns)
-					.addContainerGap(300, Short.MAX_VALUE))
+					.addContainerGap(434, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(23)
 					.addComponent(lblSelectTheColumns)
-					.addPreferredGap(ComponentPlacement.RELATED, 211, Short.MAX_VALUE)
-					.addComponent(btnNext)
+					.addGap(627)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNext)
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addGap(26))
 		);
 		frame.getContentPane().setLayout(groupLayout);

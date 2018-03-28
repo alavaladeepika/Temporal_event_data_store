@@ -17,9 +17,11 @@ public class CRUD_TablesFrame {
 	ArrayList<String> displayTables;
 	String choice;
 	JButton btnNext;
+	JButton btnMenu;
 	ButtonGroup group;
 	String selTable = null;
 	JRadioButton[] jRadioButton;
+	
 	public static Map<String,String> select_col_Names;
 	
 	/**
@@ -63,6 +65,15 @@ public class CRUD_TablesFrame {
 				 }
 			}
 		});	
+		
+		btnMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				@SuppressWarnings("unused")
+				MenuFrame m = new MenuFrame();
+			}	
+				
+		});
 	}
 
 	/**
@@ -76,25 +87,31 @@ public class CRUD_TablesFrame {
 		JLabel lblNewLabel = new JLabel("Select the table to perform '" + choice +"' :");
 		btnNext = new JButton("Next");
 		
+		btnMenu = new JButton("Menu");
+		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
+			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(55)
 					.addComponent(lblNewLabel)
-					.addContainerGap(637, Short.MAX_VALUE))
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-					.addContainerGap(873, Short.MAX_VALUE)
+					.addContainerGap(654, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(387)
+					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(413)
 					.addComponent(btnNext)
 					.addGap(61))
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(35)
 					.addComponent(lblNewLabel)
-					.addPreferredGap(ComponentPlacement.RELATED, 887, Short.MAX_VALUE)
-					.addComponent(btnNext)
+					.addPreferredGap(ComponentPlacement.RELATED, 603, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNext)
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addGap(38))
 		);
 		frame.getContentPane().setLayout(groupLayout);
@@ -110,5 +127,4 @@ public class CRUD_TablesFrame {
             frame.getContentPane().add(jRadioButton[i]);
         }
 	}
-
 }

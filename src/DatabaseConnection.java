@@ -369,7 +369,7 @@ public class DatabaseConnection{
     		statement = connection.prepareStatement(query);
     		statement.setString(1,schema);
     		statement.setString(2,tableName);
-    		System.out.println(query);
+    		//System.out.println(query);
     		resultSet = statement.executeQuery();
     		
     		while(resultSet.next()) {
