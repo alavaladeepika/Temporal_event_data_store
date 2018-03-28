@@ -61,10 +61,12 @@ public class WelcomeFrame {
 				pwd = String.valueOf(password.getPassword());
 				schema_name = schema.getText();
 				
+				@SuppressWarnings("unused")
 				DatabaseConnection c = DatabaseConnection.getInstance(user,pwd,schema_name);
 				if(success) {
 					window.frame.setVisible(false);
 					WelcomeFrame.transactTables = DatabaseConnection.getInstance(user,pwd,schema_name).getTables();
+					@SuppressWarnings("unused")
 					TablesFrame t = new TablesFrame(transactTables);
 					
 				}

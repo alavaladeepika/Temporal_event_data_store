@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class UpdateFrame {
 
@@ -16,6 +15,7 @@ public class UpdateFrame {
 	Map<String,String> colNames;
 	String selTable;
 	JButton btnNext;
+	JButton btnMenu;
 	JTextField[] textFields;
 	JTextField[] pktextFields;
 	Map<String,String> modCol;
@@ -53,6 +53,15 @@ public class UpdateFrame {
 			}	
 				
 		});	
+		
+		btnMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				@SuppressWarnings("unused")
+				MenuFrame m = new MenuFrame();
+			}	
+				
+		});
 	}
 
 	/**
@@ -83,15 +92,19 @@ public class UpdateFrame {
 		}
 		
 		btnNext = new JButton("Next");
+		
+		btnMenu = new JButton("Menu");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(262, Short.MAX_VALUE))
+					.addContainerGap(518, Short.MAX_VALUE))
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(352, Short.MAX_VALUE)
+					.addGap(427)
+					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(402)
 					.addComponent(btnNext)
 					.addGap(32))
 		);
@@ -100,8 +113,10 @@ public class UpdateFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addPreferredGap(ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
-					.addComponent(btnNext)
+					.addGap(896)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNext)
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addGap(28))
 		);
 		frame.getContentPane().setLayout(groupLayout);

@@ -16,6 +16,7 @@ public class DeleteFrame {
 	Map<String,String> colNames;
 	String selTable;
 	JButton btnNext;
+	JButton btnMenu;
 	JTextField[] textFields;
 	Map<String,String> modCol;
 
@@ -45,6 +46,14 @@ public class DeleteFrame {
 			}	
 				
 		});	
+		btnMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				@SuppressWarnings("unused")
+				MenuFrame m = new MenuFrame();
+			}	
+				
+		});
 	}
 
 	/**
@@ -59,25 +68,31 @@ public class DeleteFrame {
 		JLabel lblEnterValuesTo = new JLabel("Enter values to 'delete' :");
 		
 		btnNext = new JButton("Next");
+		
+		btnMenu = new JButton("Menu");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(262, Short.MAX_VALUE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(352, Short.MAX_VALUE)
+					.addContainerGap(800, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+					.addGap(519)
+					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(266)
 					.addComponent(btnNext)
-					.addGap(32))
+					.addGap(76))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addPreferredGap(ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
-					.addComponent(btnNext)
+					.addPreferredGap(ComponentPlacement.RELATED, 896, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNext)
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addGap(28))
 		);
 		frame.getContentPane().setLayout(groupLayout);

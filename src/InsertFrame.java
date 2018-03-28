@@ -41,14 +41,14 @@ public class InsertFrame {
 			}	
 				
 		});	
-		btnNext.addActionListener(new ActionListener() {
+		btnMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
 				@SuppressWarnings("unused")
 				MenuFrame m = new MenuFrame();
 			}	
 				
-		})
+		});
 		
 		
 	}
