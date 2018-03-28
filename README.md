@@ -3,6 +3,7 @@
 Storing events as Data items relating to time instances
 
 Tasks Accomplished:
+
 ->Given a schema, user selects a set of tables that have to be temporalised
 ->For each of the selected tables, user selects a set of columns that have to be temporalized
 ->Static Mapping : History tables are created (as hist_R) for each of the selected tables (R) whose columns are columns from the original R table 
