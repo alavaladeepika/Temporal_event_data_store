@@ -15,6 +15,7 @@ public class InsertFrame {
 	public static Map<String,String> colNames;
 	JTextField[] textFields;
 	JButton btnNext;
+	JButton btnMenu;
 	Map<String,String> modCol;
 	
 	/**
@@ -40,6 +41,15 @@ public class InsertFrame {
 			}	
 				
 		});	
+		btnNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				@SuppressWarnings("unused")
+				MenuFrame m = new MenuFrame();
+			}	
+				
+		})
+		
 		
 	}
 
@@ -55,26 +65,34 @@ public class InsertFrame {
 		JLabel lblEnterValuesTo = new JLabel("Enter values to 'insert' :");
 		
 		btnNext = new JButton("Next");
+		
+		btnMenu = new JButton("Menu");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(262, Short.MAX_VALUE))
+					.addContainerGap(804, Short.MAX_VALUE))
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(352, Short.MAX_VALUE)
+					.addGap(486)
+					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(343)
 					.addComponent(btnNext)
 					.addGap(32))
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
+			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addPreferredGap(ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 896, Short.MAX_VALUE)
 					.addComponent(btnNext)
 					.addGap(28))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(945)
+					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(30))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		

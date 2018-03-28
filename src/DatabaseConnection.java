@@ -23,7 +23,9 @@ public class DatabaseConnection{
         }
 
         catch (ClassNotFoundException e){
-            System.out.println("Driver Not Found: " + e);
+            //System.out.println("Driver Not Found: " + e);
+        	WelcomeFrame.showAlertMessage("Driver not Found!");
+        	return;
         }
 
         String url = "jdbc:mysql://127.0.0.1:3306/"+schema+"?useSSL=true";
@@ -31,11 +33,13 @@ public class DatabaseConnection{
         {
             connection = (Connection)DriverManager.getConnection(url, username, password);
             System.out.println("Successfully Connected to Database");
+            WelcomeFrame.success = true;
             
         }
         catch(SQLException e)
         {
-            System.out.println("SQL Exception: " + e); 
+            //System.out.println("SQL Exception: " + e); 
+        	WelcomeFrame.showAlertMessage("Wrong Credentials! Please try again.");
         }                   
 
     }

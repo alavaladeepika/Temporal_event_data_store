@@ -3,6 +3,9 @@ import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,6 +28,7 @@ public class WelcomeFrame {
 	private String pwd;
 	private String schema_name;
 	public static ArrayList<String> transactTables;
+	public static boolean success = false;
 
 	/**
 	 * Launch the application.
@@ -57,11 +61,15 @@ public class WelcomeFrame {
 				pwd = String.valueOf(password.getPassword());
 				schema_name = schema.getText();
 				
-				window.frame.setVisible(false);
+				DatabaseConnection c = DatabaseConnection.getInstance(user,pwd,schema_name);
+				if(success) {
+					window.frame.setVisible(false);
+					WelcomeFrame.transactTables = DatabaseConnection.getInstance(user,pwd,schema_name).getTables();
+					TablesFrame t = new TablesFrame(transactTables);
+					
+				}
 				
-				WelcomeFrame.transactTables = DatabaseConnection.getInstance(user,pwd,schema_name).getTables();
-				@SuppressWarnings("unused")
-				TablesFrame t = new TablesFrame(transactTables);
+				else window.frame.setVisible(true);
 				
 			}
 		});
@@ -145,5 +153,10 @@ public class WelcomeFrame {
 		frame.getContentPane().setLayout(groupLayout);
 	}
 	
-	
+	public static void showAlertMessage(String s) {
+		final JPanel panel = new JPanel();
+		
+		JOptionPane.showMessageDialog(panel, s,"ERROR", JOptionPane.ERROR_MESSAGE);
+		success = false;
+	}
 }
