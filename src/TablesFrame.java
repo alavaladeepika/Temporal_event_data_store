@@ -4,17 +4,17 @@ import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class TablesFrame {
 
 	private JFrame frame;
 	private JButton btnNext;
-	private JRadioButton[] jRadioButton;
+	private JCheckBox[] jCheckBox;
 	ArrayList<String> displayTables;
 	ArrayList<String> selTables = new ArrayList<String>();
 	/**
@@ -31,7 +31,7 @@ public class TablesFrame {
 				//Get selected tables 
 				
 				for(int i=displayTables.size()-1;i>=0;i--) {
-					boolean isSelected = jRadioButton[i].isSelected();
+					boolean isSelected = jCheckBox[i].isSelected();
 					if(isSelected) {
 						selTables.add(displayTables.get(i));
 					}
@@ -78,11 +78,11 @@ public class TablesFrame {
 		frame.getContentPane().setLayout(groupLayout);
 
 		int x=50, y=50, width=200, height=60; //choose whatever you want
-        jRadioButton = new JRadioButton[displayTables.size()];
+        jCheckBox = new JCheckBox[displayTables.size()];
         for(int i=0; i<displayTables.size(); i++, y+=40) {
-            jRadioButton[i] = new JRadioButton(displayTables.get(i));
-            jRadioButton[i].setBounds(x, y, width, height);
-            frame.getContentPane().add(jRadioButton[i]);
+            jCheckBox[i] = new JCheckBox(displayTables.get(i));
+            jCheckBox[i].setBounds(x, y, width, height);
+            frame.getContentPane().add(jCheckBox[i]);
         }
 	}
 }

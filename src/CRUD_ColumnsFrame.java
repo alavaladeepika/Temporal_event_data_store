@@ -6,8 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class CRUD_ColumnsFrame {
@@ -16,7 +16,7 @@ public class CRUD_ColumnsFrame {
 	Map<String,String> colNames;
 	String choice = null;
 	private JButton btnNext;
-	JRadioButton[] jRadioButton;
+	JCheckBox[] jCheckBox;
 	String selTable;
 	private JButton btnMenu;
 
@@ -36,7 +36,7 @@ public class CRUD_ColumnsFrame {
 				int i=0;
 				Map<String,String> selCols = new HashMap<String,String>();
 				for(Map.Entry<String,String> entry:colNames.entrySet()) {
-					boolean isSelected = jRadioButton[i].isSelected();
+					boolean isSelected = jCheckBox[i].isSelected();
 					if(isSelected) {
 						selCols.put(entry.getKey(),entry.getValue());
 					}
@@ -111,11 +111,11 @@ public class CRUD_ColumnsFrame {
 		frame.getContentPane().setLayout(groupLayout);
 		
 		int i=0, x=50, y=50, width=500, height=60; //choose whatever you want
-		jRadioButton = new JRadioButton[colNames.size()];
+		jCheckBox = new JCheckBox[colNames.size()];
 		for(Map.Entry<String,String> entry:colNames.entrySet()) {
-	        jRadioButton[i] = new JRadioButton(entry.getKey());
-            jRadioButton[i].setBounds(x, y, width, height);
-            frame.getContentPane().add(jRadioButton[i]);
+	        jCheckBox[i] = new JCheckBox(entry.getKey());
+            jCheckBox[i].setBounds(x, y, width, height);
+            frame.getContentPane().add(jCheckBox[i]);
             i++;
             y+=40;
 		}

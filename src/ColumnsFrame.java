@@ -6,13 +6,13 @@ import javax.swing.JFrame;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 
 public class ColumnsFrame {
 
 	private JFrame frame;
-	ArrayList<JRadioButton[]> jRadioButton = new ArrayList<JRadioButton[]>();
+	ArrayList<JCheckBox[]> jCheckBox = new ArrayList<JCheckBox[]>();
 	JButton btnNext;
 	Map<String,Map<String,String>> ColumnNames = new HashMap<String,Map<String,String>>(); 
 	String tableName;
@@ -38,7 +38,7 @@ public class ColumnsFrame {
 					int j=0;
 					Map<String,String> temp = new HashMap<String,String>();
 					for(Map.Entry<String,String> entry:entryVal.getValue().entrySet()) {
-						boolean isSelected = jRadioButton.get(i)[j].isSelected();
+						boolean isSelected = jCheckBox.get(i)[j].isSelected();
 						if(isSelected) {
 							temp.put(entry.getKey(),entry.getValue());
 						}
@@ -87,13 +87,13 @@ public class ColumnsFrame {
 			JLabel lblSelectTheColumns = new JLabel("Select the columns from '" + entryVal.getKey() + "' to temporalise : ");
 			lblSelectTheColumns.setBounds(x, y, width, height);
 			frame.getContentPane().add(lblSelectTheColumns);
-			jRadioButton.add(i,new JRadioButton[entryVal.getValue().size()]);
+			jCheckBox.add(i,new JCheckBox[entryVal.getValue().size()]);
 			int j=0;
 			for(Map.Entry<String,String> entry:entryVal.getValue().entrySet()) {
 				y+=40;
-		        jRadioButton.get(i)[j] = new JRadioButton(entry.getKey());
-	            jRadioButton.get(i)[j].setBounds(x, y, width, height);
-	            frame.getContentPane().add(jRadioButton.get(i)[j]);
+		        jCheckBox.get(i)[j] = new JCheckBox(entry.getKey());
+	            jCheckBox.get(i)[j].setBounds(x, y, width, height);
+	            frame.getContentPane().add(jCheckBox.get(i)[j]);
 	            j++;
 			}
 			y+=40;
