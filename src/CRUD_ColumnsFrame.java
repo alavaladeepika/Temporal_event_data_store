@@ -87,26 +87,26 @@ public class CRUD_ColumnsFrame {
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(208)
-					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 621, Short.MAX_VALUE)
-					.addComponent(btnNext)
-					.addGap(22))
-				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblSelectTheColumns)
 					.addContainerGap(434, Short.MAX_VALUE))
+				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+					.addGap(221)
+					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 607, Short.MAX_VALUE)
+					.addComponent(btnNext)
+					.addGap(23))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(23)
 					.addComponent(lblSelectTheColumns)
-					.addGap(627)
+					.addGap(880)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNext)
-						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addGap(26))
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNext))
+					.addGap(57))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		

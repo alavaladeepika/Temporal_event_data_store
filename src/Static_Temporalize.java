@@ -29,7 +29,7 @@ public class Static_Temporalize {
 		String hist_table = "hist_" + table;
 		
 		if(DatabaseConnection.getInstance().create_table(table,hist_table,pk,col).equals("success")) {
-			DatabaseConnection.getInstance().add_FK_constraint(table,hist_table,pk,col);
+			DatabaseConnection.getInstance().add_Triggers(table,hist_table,pk,col);
 			return hist_table;
 		}
 		

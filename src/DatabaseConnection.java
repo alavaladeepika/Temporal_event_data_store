@@ -297,42 +297,10 @@ public class DatabaseConnection{
     	}
 	}
     
-    public void add_FK_constraint(String ref_table,String table,Map<String,String> pk,Map<String,String> col) {
-    	String query = "ALTER TABLE " + table + " ADD CONSTRAINT FOREIGN KEY(";
-    	int i=0;
-    	for(Map.Entry<String,String> entry:pk.entrySet()) {
-    		if(i==0) {
-    			query += entry.getKey();
-    			i=1;
-    		}
-    		else {
-    			query += "," + entry.getKey();
-    			}
-    	}
-    	query += ") REFERENCES " + ref_table + "(" ;
-    	i=0;
-    	for(Map.Entry<String,String> entry:pk.entrySet()) {
-    		if(i==0) {
-    			query += entry.getKey();
-    			i=1;
-    		}
-    		else {
-    			query += "," + entry.getKey();
-    			}
-    	}
-    	query += ");";
-    	try {
-    		//System.out.println(query);
-    		statement = connection.prepareStatement(query);
-    		statement.execute();
-    		
-    		onInsert_Trigger(ref_table,table,pk,col);
-    		onUpdate_Trigger(ref_table,table,pk,col);
-    		onDelete_Trigger(ref_table,table,pk,col);
-    	}
-    	catch(SQLException e){
-    		e.printStackTrace();
-    	}
+    public void add_Triggers(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+   		onInsert_Trigger(table,hist_table,pk,col);
+   		onUpdate_Trigger(table,hist_table,pk,col);
+   		onDelete_Trigger(table,hist_table,pk,col);
     }
     
     public Map<String,String> getInsert_UpdateColumns(String tableName) {
