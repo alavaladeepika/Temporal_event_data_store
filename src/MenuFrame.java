@@ -25,31 +25,36 @@ public class MenuFrame {
 		initialize();
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				tFrame = new CRUD_TablesFrame("insert"); 
 			}
 		});
 		btnSelect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				tFrame = new CRUD_TablesFrame("select"); 
 			}
 		});
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				tFrame = new CRUD_TablesFrame("update"); 
 			}
 		});
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				tFrame = new CRUD_TablesFrame("delete"); 
 			}
 		});
 		btnTemporalOperators.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				//TODO : Add code
 			}
 		});

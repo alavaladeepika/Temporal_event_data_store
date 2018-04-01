@@ -28,7 +28,8 @@ public class ViewSelectedFrame {
 		
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				//Get selected tables 
 				@SuppressWarnings("unused")
 				MenuFrame m = new MenuFrame();

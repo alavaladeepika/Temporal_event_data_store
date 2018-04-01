@@ -31,7 +31,8 @@ public class ColumnsFrame {
 		//Next button action
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				//Get selected tables 
 				int i=0;
 				for(Map.Entry<String,Map<String,String>> entryVal:ColumnNames.entrySet()) {

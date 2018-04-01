@@ -31,7 +31,8 @@ public class SelectFrame {
 		
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				//Get selected tables 
 				int i = 0;
 				modCol = new HashMap<String,String>();
@@ -47,7 +48,8 @@ public class SelectFrame {
 		
 		btnMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				@SuppressWarnings("unused")
 				MenuFrame m = new MenuFrame();
 			}	

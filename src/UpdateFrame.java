@@ -33,7 +33,8 @@ public class UpdateFrame {
 		
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				//Get selected tables 
 				int i = 0;
 				pkCol = new HashMap<String,String>();
@@ -56,7 +57,8 @@ public class UpdateFrame {
 		
 		btnMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				//frame.setVisible(false);
+				frame.dispose();
 				@SuppressWarnings("unused")
 				MenuFrame m = new MenuFrame();
 			}	
