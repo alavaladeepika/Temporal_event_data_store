@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
@@ -178,7 +181,7 @@ public class DatabaseConnection{
 		for(Map.Entry<String,String> entry:col.entrySet()) {
 			query += "," + entry.getKey() + " " + entry.getValue();
 		}
-		query += ", START_DATE DATETIME DEFAULT NOW(), END_DATE DATETIME, PRIMARY KEY(";
+		query += ", START_DATE DATETIME DEFAULT NOW(), END_DATE DATETIME, UNIQUE(";
 		i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -206,7 +209,7 @@ public class DatabaseConnection{
     	return "failure";
     }
     
-    public void onInsert_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+    public String onInsert_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
     	String query = "create trigger after_" + table + "_insert after insert on " +
     			table + " for each row begin insert into " + hist_table + " set " ;
     	int i=0;
@@ -231,9 +234,10 @@ public class DatabaseConnection{
     	catch(SQLException e){
     		e.printStackTrace();
     	}
+    	return query;
     }
     
-    public void onUpdate_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+    public String onUpdate_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
     	String query = "create trigger after_" + table + "_update after update on " +
     			table + " for each row begin update "+ hist_table + " set END_DATE = NOW() where "; 
     	int i=0;
@@ -270,9 +274,10 @@ public class DatabaseConnection{
     	catch(SQLException e){
     		e.printStackTrace();
     	}
+    	return query;
     }
 
-	public void onDelete_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+	public String onDelete_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
 		String query = "create trigger after_" + table + "_delete after delete on " +
     			table + " for each row begin update " + hist_table + " set END_DATE = NOW()"
     					+ " where ";
@@ -295,12 +300,26 @@ public class DatabaseConnection{
     	catch(SQLException e){
     		e.printStackTrace();
     	}
+    	return query;
 	}
     
-    public void add_Triggers(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
-   		onInsert_Trigger(table,hist_table,pk,col);
-   		onUpdate_Trigger(table,hist_table,pk,col);
-   		onDelete_Trigger(table,hist_table,pk,col);
+    public void add_Triggers(String table,String hist_table,Map<String,String> pk,Map<String,String> col){
+   		String insert_trigger = onInsert_Trigger(table,hist_table,pk,col);
+   		String update_trigger = onUpdate_Trigger(table,hist_table,pk,col);
+   		String delete_trigger = onDelete_Trigger(table,hist_table,pk,col);
+   		
+   		File file = new File("/home/deepika/eclipse-workspace/Temporal_Event_Store/triggers_queries.txt");
+	   	try {
+			file.createNewFile();
+			FileWriter output = new FileWriter(file);
+			output.write(insert_trigger + "\n");
+			output.write(update_trigger + "\n");
+			output.write(delete_trigger + "\n");
+			output.close();
+		} 
+	   	catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     public Map<String,String> getInsert_UpdateColumns(String tableName) {
