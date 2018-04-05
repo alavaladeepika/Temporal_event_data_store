@@ -635,7 +635,7 @@ public class DatabaseConnection{
     	return resultSet;
     }
     
-  //Value that follows the given value 'cVal' along with its START_DATE
+    //Value that follows the given value 'cVal' along with its START_DATE
     public ResultSet getNext(Map<String,String> pk, String table, String column, String cVal) {
     	String query = "SELECT " + column + ", START_DATE FROM hist_"+ table+
     			" WHERE START_DATE = (SELECT MIN(START_DATE) FROM hist_"+table
@@ -688,7 +688,64 @@ public class DatabaseConnection{
     
     
     //Indicates the value which precedes the current value and its timestamp, according to the specified day
+    public String getPrevious_SCALE(Map<String,String> pk, String table, String column, int yy, int mm, int dd) {
+    	String query = "SELECT "+column+" FROM hist_"+table+"WHERE ";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	query += " AND START_DATE <= (SELECT DATE_DIFF(DATE_DIFF(DATE_DIFF(NOW(),INTERVAL "+yy+" YEAR)"
+				+ ", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY)) AND "
+					+ "END_DATE > (SELECT DATE_DIFF(DATE_DIFF(DATE_DIFF(NOW(),INTERVAL "+yy+" YEAR)"
+						+", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY))";
+    	resultSet = null;
+    	String colVal = null;
+    	try {
+    		statement = connection.prepareStatement(query);
+    		resultSet = statement.executeQuery();
+    		colVal = resultSet.getString(0);
+    	} 
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	return colVal;
+    }
     
+    //Indicates the value which follows the current value and its timestamp, according to the specified day
+    public String getNext_SCALE(Map<String,String> pk, String table, String column, int yy, int mm, int dd) {
+    	String query = "SELECT "+column+" FROM hist_"+table+"WHERE ";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	query += " AND START_DATE <= (SELECT DATE_ADD(DATE_ADD(DATE_ADD(NOW(),INTERVAL "+yy+" YEAR)"
+    				+ ", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY)) AND "
+    					+ "END_DATE > (SELECT DATE_ADD(DATE_ADD(DATE_ADD(NOW(),INTERVAL "+yy+" YEAR)"
+    						+", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY))";
+    	resultSet = null;
+    	String colVal = null;
+    	try {
+    		statement = connection.prepareStatement(query);
+    		resultSet = statement.executeQuery();
+    		colVal = resultSet.getString(0);
+    	} 
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	return colVal;
+    }
     
     //Indicates all the evolution dates of the column
     public ResultSet getEvolution_History(Map<String,String> pk, String table, String column) {
