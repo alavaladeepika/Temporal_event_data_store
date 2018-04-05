@@ -789,7 +789,7 @@ public class DatabaseConnection{
     		}
     	}
     	i=0;
-    	query += " AND START_DATE = (SELECT MAX(START_DATE) FROM hist_"+ table + " WHERE ";
+    	query += " AND START_DATE = (SELECT MIN(START_DATE) FROM hist_"+ table + " WHERE ";
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
     			query += entry.getKey() + "='" + entry.getValue() + "'";
@@ -964,7 +964,7 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
-    	query += " AND "+column+"='"+val+"'";
+    	query += " AND "+column+"='"+val+"' ORDER BY START_DATE LIMIT 1";
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);

@@ -2,6 +2,9 @@ package initGUI;
 import java.util.*;
 
 import javax.swing.JFrame;
+
+import temporalGUI.TemporalMenuFrame;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -56,7 +59,8 @@ public class MenuFrame {
 			public void actionPerformed(ActionEvent e) {
 				//frame.setVisible(false);
 				frame.dispose();
-				
+				@SuppressWarnings("unused")
+				TemporalMenuFrame tempFrame = new TemporalMenuFrame();
 			}
 		});
 		
