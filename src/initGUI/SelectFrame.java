@@ -1,3 +1,4 @@
+package initGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -8,9 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
-public class DeleteFrame {
+import dbResource.DatabaseConnection;
+
+public class SelectFrame {
 
 	private JFrame frame;
 	Map<String,String> colNames;
@@ -25,7 +27,7 @@ public class DeleteFrame {
 	/**
 	 * Create the application.
 	 */
-	public DeleteFrame(String table,Map<String,String> sel) {
+	public SelectFrame(String table,Map<String,String> sel) {
 		selTable = table;
 		colNames = sel;
 		initialize();
@@ -41,12 +43,12 @@ public class DeleteFrame {
 					modCol.put(entry.getKey(), textFields[i].getText());
 					i++;
 				}
-				DatabaseConnection.getInstance().deleteRow(modCol,selTable);
 				@SuppressWarnings("unused")
-				MenuFrame m = new MenuFrame();
+				ViewSelectedFrame v = new ViewSelectedFrame(DatabaseConnection.getInstance().selectRows(modCol,selTable));
 			}	
 				
 		});	
+		
 		btnMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//frame.setVisible(false);
@@ -67,7 +69,7 @@ public class DeleteFrame {
 		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblEnterValuesTo = new JLabel("Enter values to 'delete' :");
+		JLabel lblEnterValuesTo = new JLabel("Enter values to 'select' :");
 		
 		btnNext = new JButton("Next");
 		
@@ -78,11 +80,11 @@ public class DeleteFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(800, Short.MAX_VALUE))
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-					.addGap(519)
+					.addContainerGap(803, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(473)
 					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(266)
+					.addGap(312)
 					.addComponent(btnNext)
 					.addGap(76))
 		);
@@ -91,7 +93,7 @@ public class DeleteFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addPreferredGap(ComponentPlacement.RELATED, 896, Short.MAX_VALUE)
+					.addGap(896)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnNext)
 						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))

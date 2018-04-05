@@ -1,3 +1,4 @@
+package initGUI;
 import java.awt.EventQueue;
 import java.util.*;
 
@@ -13,6 +14,9 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
+import dbResource.DatabaseConnection;
+
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 

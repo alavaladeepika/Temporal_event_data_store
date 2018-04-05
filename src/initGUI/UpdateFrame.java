@@ -1,3 +1,4 @@
+package initGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -9,7 +10,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
 
-public class SelectFrame {
+import dbResource.DatabaseConnection;
+
+public class UpdateFrame {
 
 	private JFrame frame;
 	Map<String,String> colNames;
@@ -17,16 +20,18 @@ public class SelectFrame {
 	JButton btnNext;
 	JButton btnMenu;
 	JTextField[] textFields;
+	JTextField[] pktextFields;
 	Map<String,String> modCol;
-
-	
+	Map<String,String> pk;
+	Map<String,String> pkCol;
 
 	/**
 	 * Create the application.
 	 */
-	public SelectFrame(String table,Map<String,String> sel) {
+	public UpdateFrame(String table,Map<String,String> sel) {
 		selTable = table;
 		colNames = sel;
+		pk = DatabaseConnection.getInstance().getPrimaryKey(selTable);
 		initialize();
 		
 		btnNext.addActionListener(new ActionListener() {
@@ -35,13 +40,20 @@ public class SelectFrame {
 				frame.dispose();
 				//Get selected tables 
 				int i = 0;
+				pkCol = new HashMap<String,String>();
+				for(Map.Entry<String,String> entry:pk.entrySet()){
+					pkCol.put(entry.getKey(), pktextFields[i].getText());
+					i++;
+				}
+				i = 0;
 				modCol = new HashMap<String,String>();
 				for(Map.Entry<String,String> entry:colNames.entrySet()){
 					modCol.put(entry.getKey(), textFields[i].getText());
 					i++;
 				}
+				DatabaseConnection.getInstance().updateRow(pkCol,modCol,selTable);
 				@SuppressWarnings("unused")
-				ViewSelectedFrame v = new ViewSelectedFrame(DatabaseConnection.getInstance().selectRows(modCol,selTable));
+				MenuFrame m = new MenuFrame();
 			}	
 				
 		});	
@@ -66,7 +78,23 @@ public class SelectFrame {
 		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblEnterValuesTo = new JLabel("Enter values to 'select' :");
+		JLabel lblEnterValuesTo = new JLabel("Enter the details(PRIMARY KEY) of the row you want to 'update' :");
+		int i=0, x=50, y=50, width=500, height=60; //choose whatever you want
+		pktextFields = new JTextField[pk.size()];
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			
+			JLabel lblCol = new JLabel(entry.getKey()+"("+entry.getValue()+") :");
+			lblCol.setBounds(x, y, width, height);
+			frame.getContentPane().add(lblCol);
+			y+=40;
+			pktextFields[i] = new JTextField();
+			pktextFields[i].setColumns(10);
+            pktextFields[i].setBounds(x, y, width, height);
+            
+            frame.getContentPane().add(pktextFields[i]);
+            y+=40;
+            i++;
+		}
 		
 		btnNext = new JButton("Next");
 		
@@ -77,13 +105,13 @@ public class SelectFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(803, Short.MAX_VALUE))
+					.addContainerGap(518, Short.MAX_VALUE))
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(473)
-					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(312)
+					.addGap(427)
+					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(402)
 					.addComponent(btnNext)
-					.addGap(76))
+					.addGap(32))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -97,8 +125,12 @@ public class SelectFrame {
 					.addGap(28))
 		);
 		frame.getContentPane().setLayout(groupLayout);
-		
-		int i=0, x=50, y=50, width=500, height=60; //choose whatever you want
+		y+=50;
+		JLabel lblEnterValues = new JLabel("Enter the values to 'update' :");
+		lblEnterValues.setBounds(x-20, y, width, height);
+		frame.getContentPane().add(lblEnterValues);
+		y+=40;
+		i=0;
 		textFields = new JTextField[colNames.size()];
 		for(Map.Entry<String,String> entry:colNames.entrySet()) {
 			

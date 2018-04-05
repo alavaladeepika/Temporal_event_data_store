@@ -1,3 +1,4 @@
+package initGUI;
 import java.util.*;
 
 import javax.swing.JFrame;

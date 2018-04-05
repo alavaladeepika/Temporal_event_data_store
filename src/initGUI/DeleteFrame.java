@@ -1,30 +1,38 @@
+package initGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JFrame;
 import java.util.*;
+
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JButton;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-public class InsertFrame {
+
+import dbResource.DatabaseConnection;
+
+public class DeleteFrame {
 
 	private JFrame frame;
-	public static Map<String,String> colNames;
-	JTextField[] textFields;
+	Map<String,String> colNames;
+	String selTable;
 	JButton btnNext;
 	JButton btnMenu;
+	JTextField[] textFields;
 	Map<String,String> modCol;
+
 	
+
 	/**
 	 * Create the application.
 	 */
-	public InsertFrame(String selTable,Map<String,String> c) {
-		colNames = c;
-		
+	public DeleteFrame(String table,Map<String,String> sel) {
+		selTable = table;
+		colNames = sel;
 		initialize();
+		
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//frame.setVisible(false);
@@ -36,7 +44,7 @@ public class InsertFrame {
 					modCol.put(entry.getKey(), textFields[i].getText());
 					i++;
 				}
-				DatabaseConnection.getInstance().insertRow(modCol,selTable);
+				DatabaseConnection.getInstance().deleteRow(modCol,selTable);
 				@SuppressWarnings("unused")
 				MenuFrame m = new MenuFrame();
 			}	
@@ -51,8 +59,6 @@ public class InsertFrame {
 			}	
 				
 		});
-		
-		
 	}
 
 	/**
@@ -64,37 +70,35 @@ public class InsertFrame {
 		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblEnterValuesTo = new JLabel("Enter values to 'insert' :");
+		JLabel lblEnterValuesTo = new JLabel("Enter values to 'delete' :");
 		
 		btnNext = new JButton("Next");
 		
 		btnMenu = new JButton("Menu");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
+			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(804, Short.MAX_VALUE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(486)
+					.addContainerGap(800, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+					.addGap(519)
 					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(343)
+					.addGap(266)
 					.addComponent(btnNext)
-					.addGap(32))
+					.addGap(76))
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
+			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
 					.addPreferredGap(ComponentPlacement.RELATED, 896, Short.MAX_VALUE)
-					.addComponent(btnNext)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNext)
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addGap(28))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(945)
-					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(30))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		

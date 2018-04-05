@@ -1,10 +1,16 @@
+package initGUI;
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+
+import dbResource.DatabaseConnection;
+import dbResource.Static_Temporalize;
+
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;

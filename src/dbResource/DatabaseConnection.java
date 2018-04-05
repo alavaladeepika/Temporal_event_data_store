@@ -1,8 +1,11 @@
+package dbResource;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+
+import initGUI.WelcomeFrame;
 
 //For opening the Database Connection
 public class DatabaseConnection{
