@@ -94,7 +94,7 @@ public class EnterPKFrame {
 				 		break;
 				 	case "evolution_V1-V2":
 				 		@SuppressWarnings("unused")
-				 		EnterTwoValColFrame ec = new EnterTwoValColFrame(pkVal,selCol,selColType,choice);
+				 		EnterTwoValColFrame ec = new EnterTwoValColFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "timestamps":
 				 		@SuppressWarnings("unused") 
@@ -102,7 +102,7 @@ public class EnterPKFrame {
 				 		break;
 				 	case "this_value":
 				 		@SuppressWarnings("unused") 
-				 		EnterDateFrame tv = new EnterDateFrame(pkVal,selCol);
+				 		EnterDateFrame tv = new EnterDateFrame(pkVal,selTable,selCol);
 				 		break;
 				 	case "this_timestampname":
 				 		//@SuppressWarnings("unused") 

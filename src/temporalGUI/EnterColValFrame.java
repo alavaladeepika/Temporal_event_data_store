@@ -1,6 +1,5 @@
 package temporalGUI;
 
-import java.awt.EventQueue;
 import java.util.HashMap;
 import java.util.Map;
 

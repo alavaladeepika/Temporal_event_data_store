@@ -884,7 +884,7 @@ public class DatabaseConnection{
     }
     
   //Indicates the evolution date from ‘val1’ to ‘val2’.
-    public ResultSet evolutionVal12(Map<String,String> pk, String table, String column, String val1, String val2) {
+    public ResultSet getEvolutionVal12(Map<String,String> pk, String table, String column, String val1, String val2) {
     	//to retrieve the start_date of val1
     	String query_val1 = "SELECT MAX(START_DATE) FROM hist_"+table+" WHERE ";
     	int i=0;
