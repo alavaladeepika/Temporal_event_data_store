@@ -61,28 +61,28 @@ public class EnterPKFrame {
 				 		ResultFrame l = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
 				 		break;
 				 	case "next":
-				 		@SuppressWarnings("unused")
-				 		EnterColValFrame ecn = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		//@SuppressWarnings("unused")
+				 		//EnterColValFrame ecn = new EnterColValFrame(pkVal,selCol,selColType,choice);
 				 		break;
 				 	case "previous":
-				 		@SuppressWarnings("unused") 
-				 		EnterColValFrame ecp = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		//@SuppressWarnings("unused") 
+				 		//EnterColValFrame ecp = new EnterColValFrame(pkVal,selCol,selColType,choice);
 				 		break;
 				 	case "previous_scale":
-				 		@SuppressWarnings("unused") 
-				 		ResultFrame p = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
+				 		//@SuppressWarnings("unused") 
+				 		//ResultFrame p = new ResultFrame(DatabaseConnection.getInstance().);
 				 		break;
 				 	case "next_scale":
-				 		@SuppressWarnings("unused")
-				 		ResultFrame n = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
+				 		//@SuppressWarnings("unused")
+				 		//ResultFrame n = new ResultFrame(DatabaseConnection.getInstance().);
 				 		break;
 				 	case "evolution_history":
 				 		@SuppressWarnings("unused") 
 				 		ResultFrame eh = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
 				 		break;
 				 	case "evolution":
-				 		@SuppressWarnings("unused") 
-				 		EnterColValFrame ece = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		//@SuppressWarnings("unused") 
+				 		//EnterColValFrame ece = new EnterColValFrame(pkVal,selCol,selColType,choice);
 				 		break;
 				 	case "first_evolution":
 				 		@SuppressWarnings("unused") 
@@ -97,8 +97,8 @@ public class EnterPKFrame {
 				 		EnterTwoValColFrame ec = new EnterTwoValColFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "timestamps":
-				 		@SuppressWarnings("unused") 
-				 		EnterColValFrame ect = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		//@SuppressWarnings("unused") 
+				 		//EnterColValFrame ect = new EnterColValFrame(pkVal,selCol,selColType,choice);
 				 		break;
 				 	case "this_value":
 				 		@SuppressWarnings("unused") 
@@ -130,7 +130,7 @@ public class EnterPKFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setVisible(true);
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblEnterThePk = new JLabel("Enter the PK value(s) to perform the operation '"+choice+"'on '"+selTable+"':");

@@ -64,10 +64,11 @@ public class EnterTwoValColFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 		
-		JLabel lblEnterThe = new JLabel("Enter the");
+		JLabel lblEnterThe = new JLabel("Enter the values of '"+selCol+"':");
 		
 		textField1 = new JTextField();
 		textField1.setColumns(10);
