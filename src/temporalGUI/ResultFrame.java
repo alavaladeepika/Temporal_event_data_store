@@ -1,6 +1,8 @@
 package temporalGUI;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
@@ -24,6 +26,16 @@ public class ResultFrame {
 	public ResultFrame(java.sql.ResultSet r) {
 		result = r;
 		initialize();
+		
+		btnDone.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//frame.setVisible(false);
+				frame.dispose();
+				@SuppressWarnings("unused")
+				TemporalMenuFrame m = new TemporalMenuFrame();
+			}	
+				
+		});
 	}
 
 	/**

@@ -1006,7 +1006,6 @@ public class DatabaseConnection{
     
     
     
-    
     public void closeConnection() {
     	try {
     		if(connection!=null) {
