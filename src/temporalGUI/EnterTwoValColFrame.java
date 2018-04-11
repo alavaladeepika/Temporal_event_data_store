@@ -39,8 +39,6 @@ public class EnterTwoValColFrame {
 			public void actionPerformed(ActionEvent e) {
 				//frame.setVisible(false);
 				frame.dispose();
-				//Get selected tables 
-				
 				
 				@SuppressWarnings("unused")
 				ResultFrame r = new ResultFrame(DatabaseConnection.getInstance().getEvolutionVal12(pk,selTable,selCol,

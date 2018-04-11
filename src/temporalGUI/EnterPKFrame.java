@@ -61,12 +61,12 @@ public class EnterPKFrame {
 				 		ResultFrame l = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
 				 		break;
 				 	case "next":
-				 		//@SuppressWarnings("unused")
-				 		//EnterColValFrame ecn = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		@SuppressWarnings("unused")
+				 		EnterColValFrame ecn = new EnterColValFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "previous":
-				 		//@SuppressWarnings("unused") 
-				 		//EnterColValFrame ecp = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		@SuppressWarnings("unused") 
+				 		EnterColValFrame ecp = new EnterColValFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "previous_scale":
 				 		//@SuppressWarnings("unused") 
@@ -81,8 +81,8 @@ public class EnterPKFrame {
 				 		ResultFrame eh = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
 				 		break;
 				 	case "evolution":
-				 		//@SuppressWarnings("unused") 
-				 		//EnterColValFrame ece = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		@SuppressWarnings("unused") 
+				 		EnterColValFrame ev = new EnterColValFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "first_evolution":
 				 		@SuppressWarnings("unused") 
@@ -97,8 +97,8 @@ public class EnterPKFrame {
 				 		EnterTwoValColFrame ec = new EnterTwoValColFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "timestamps":
-				 		//@SuppressWarnings("unused") 
-				 		//EnterColValFrame ect = new EnterColValFrame(pkVal,selCol,selColType,choice);
+				 		@SuppressWarnings("unused") 
+				 		EnterColValFrame ect = new EnterColValFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "this_value":
 				 		@SuppressWarnings("unused") 

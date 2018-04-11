@@ -31,6 +31,7 @@ public class EnterColValFrame {
 		pk = val;
 		selCol = col;
 		selColType = cType;
+		selTable = table;
 		choice = c;
 		initialize();
 		
@@ -38,12 +39,29 @@ public class EnterColValFrame {
 			public void actionPerformed(ActionEvent e) {
 				//frame.setVisible(false);
 				frame.dispose();
-				//Get selected tables 
 				
-				
-				//@SuppressWarnings("unused")
-				//ResultFrame r = new ResultFrame(DatabaseConnection.getInstance().getEvolutionVal12(pk,selTable,selCol,
-						//textField1.getText(),textField2.getText()));
+				@SuppressWarnings("unused")
+				String colVal = textField1.getText();
+				switch(choice) {
+				case "next":
+					@SuppressWarnings("unused") 
+			 		ResultFrame n = new ResultFrame(DatabaseConnection.getInstance().getNext(pk, selTable, selCol, colVal));
+			 		break;
+				case "previous":
+					@SuppressWarnings("unused") 
+			 		ResultFrame p = new ResultFrame(DatabaseConnection.getInstance().getPrevious(pk, selTable, selCol, colVal));
+			 		break;
+				case "evolution":
+					@SuppressWarnings("unused") 
+			 		ResultFrame ev = new ResultFrame(DatabaseConnection.getInstance().getEvolution(pk, selTable, selCol, colVal));
+			 		break;
+				case "timestamps":
+					@SuppressWarnings("unused") 
+			 		ResultFrame t = new ResultFrame(DatabaseConnection.getInstance().getEvolution(pk, selTable, selCol, colVal));
+			 		break;
+				default: break;
+					
+				}
 			}
 		});	
 		
