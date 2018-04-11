@@ -3,27 +3,27 @@ package temporalGUI;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.mysql.jdbc.ResultSetMetaData;
-
 public class ResultFrame {
 
 	private JFrame frame;
-	java.sql.ResultSet result=null;
+	ArrayList<Map<String,String>> result;
 	JTable tb;
 	private JButton btnDone;
 
 	/**
 	 * Create the application.
 	 */
-	public ResultFrame(java.sql.ResultSet r) {
+	public ResultFrame(ArrayList<Map<String,String>> r) {
 		result = r;
 		initialize();
 		
@@ -49,31 +49,32 @@ public class ResultFrame {
 		
 		tb = new JTable();
 		DefaultTableModel dtm = new DefaultTableModel(0,0);
-		ResultSetMetaData col = null;
 		String header[];
-		try {
-			col = (ResultSetMetaData) result.getMetaData();
-			header = new String[col.getColumnCount()];
-			for(int i=0;i<col.getColumnCount();i++) {
-				header[i] = col.getColumnName(i);
+
+		if(result.size()>0) {
+			header = new String[result.get(0).size()];
+			int j=0;
+			for(Map.Entry<String,String> entry:result.get(0).entrySet()) {
+				header[j] = entry.getKey();
+				j++;
 			}
+	
 			dtm.setColumnIdentifiers(header);
 			tb.setModel(dtm);
-			
-			while(result.next()) {
+				
+			for(int i=0;i<result.size();i++) {
 				Object[] data = new Object[header.length];
-				for(int j=0;j<header.length;j++) {
-					data[j] = result.getString(header[j]);
+				for(int k=0;k<header.length;k++) {
+					data[k] = result.get(i).get(header[k]);
 				}
 				dtm.addRow(data);
 			}
-		} 
-		catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			frame.getContentPane().add(new JScrollPane(tb));
 		}
- 		
-		frame.getContentPane().add(new JScrollPane(tb));
+		else {
+			JLabel label = new JLabel("No data found!!");
+			frame.getContentPane().add(label, BorderLayout.NORTH);
+		}
 		
 		btnDone = new JButton("Done");
 		frame.getContentPane().add(btnDone, BorderLayout.SOUTH);

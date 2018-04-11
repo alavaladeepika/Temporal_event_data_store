@@ -57,7 +57,7 @@ public class EnterColValFrame {
 			 		break;
 				case "timestamps":
 					@SuppressWarnings("unused") 
-			 		ResultFrame t = new ResultFrame(DatabaseConnection.getInstance().getEvolution(pk, selTable, selCol, colVal));
+			 		ResultFrame t = new ResultFrame(DatabaseConnection.getInstance().getTimestamps(pk, selTable, selCol, colVal));
 			 		break;
 				default: break;
 					
@@ -72,7 +72,6 @@ public class EnterColValFrame {
 				@SuppressWarnings("unused")
 				TemporalMenuFrame m = new TemporalMenuFrame();
 			}	
-				
 		});
 	}
 
@@ -102,12 +101,12 @@ public class EnterColValFrame {
 					.addGap(37)
 					.addComponent(textField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(576))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(83)
+				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+					.addGap(80)
 					.addComponent(btnBackToMenu)
-					.addPreferredGap(ComponentPlacement.RELATED, 683, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 667, Short.MAX_VALUE)
 					.addComponent(btnNext)
-					.addGap(39))
+					.addGap(68))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -116,11 +115,11 @@ public class EnterColValFrame {
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblFrom)
 						.addComponent(textField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(864)
+					.addGap(777)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNext)
-						.addComponent(btnBackToMenu))
-					.addContainerGap())
+						.addComponent(btnBackToMenu)
+						.addComponent(btnNext))
+					.addGap(87))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 	}

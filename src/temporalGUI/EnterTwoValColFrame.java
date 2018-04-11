@@ -30,6 +30,7 @@ public class EnterTwoValColFrame {
 	 */
 	public EnterTwoValColFrame(Map<String,String> val,String table,String col,String cType,String c) {
 		pk = val;
+		selTable = table;
 		selCol = col;
 		selColType = cType;
 		choice = c;

@@ -13,7 +13,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import dbResource.DatabaseConnection;
-import initGUI.WelcomeFrame;
+import dbResource.Static_Temporalize;
 
 public class TablesFrame {
 
@@ -33,7 +33,7 @@ public class TablesFrame {
 	 */
 	public TablesFrame(String c) {
 		choice = c;
-		displayTables = WelcomeFrame.transactTables;
+		displayTables = Static_Temporalize.hist_tables;
 		
 		initialize();
 		
@@ -51,7 +51,7 @@ public class TablesFrame {
 					}
 				}
 				@SuppressWarnings("unused")
-				ColumnsFrame c = new ColumnsFrame(selTable,choice,DatabaseConnection.getInstance().getColumns(selTable));
+				ColumnsFrame c = new ColumnsFrame(selTable,choice,DatabaseConnection.getInstance().getTempColumns(selTable));
 			}
 		});	
 		

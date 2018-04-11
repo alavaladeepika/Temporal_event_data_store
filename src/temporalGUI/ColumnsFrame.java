@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.util.*;
 
 import javax.swing.JFrame;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -20,6 +21,7 @@ public class ColumnsFrame {
 	JRadioButton[] jRadioButton;
 	String selTable;
 	private JButton btnMenu;
+	ButtonGroup group;
 
 	/**
 	 * Create the application.
@@ -71,7 +73,7 @@ public class ColumnsFrame {
 		
 		btnNext = new JButton("Next");
 		
-		JLabel lblSelectTheColumns = new JLabel("Select the columns through which you want to '" + choice + "' from '" + selTable + "' :");
+		JLabel lblSelectTheColumns = new JLabel("Select the column you want to obtain from the operation '" + choice + "' from '" + selTable + "' :");
 		
 		btnMenu = new JButton("Menu");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
@@ -103,9 +105,11 @@ public class ColumnsFrame {
 		
 		int i=0, x=50, y=50, width=500, height=60; //choose whatever you want
 		jRadioButton = new JRadioButton[colNames.size()];
+		group = new ButtonGroup();
 		for(Map.Entry<String,String> entry:colNames.entrySet()) {
 	        jRadioButton[i] = new JRadioButton(entry.getKey());
             jRadioButton[i].setBounds(x, y, width, height);
+            group.add(jRadioButton[i]);
             frame.getContentPane().add(jRadioButton[i]);
             i++;
             y+=40;

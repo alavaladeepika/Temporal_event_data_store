@@ -69,12 +69,12 @@ public class EnterPKFrame {
 				 		EnterColValFrame ecp = new EnterColValFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "previous_scale":
-				 		//@SuppressWarnings("unused") 
-				 		//ResultFrame p = new ResultFrame(DatabaseConnection.getInstance().);
+				 		@SuppressWarnings("unused") 
+				 		DateScaleFrame p = new DateScaleFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "next_scale":
-				 		//@SuppressWarnings("unused")
-				 		//ResultFrame n = new ResultFrame(DatabaseConnection.getInstance().);
+				 		@SuppressWarnings("unused")
+				 		DateScaleFrame n = new DateScaleFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	case "evolution_history":
 				 		@SuppressWarnings("unused") 
@@ -86,11 +86,11 @@ public class EnterPKFrame {
 				 		break;
 				 	case "first_evolution":
 				 		@SuppressWarnings("unused") 
-				 		ResultFrame fe = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
+				 		ResultFrame fe = new ResultFrame(DatabaseConnection.getInstance().getFirst_Evolution(pkVal, selTable, selCol));
 				 		break;
 				 	case "last_evolution":
 				 		@SuppressWarnings("unused") 
-				 		ResultFrame le = new ResultFrame(DatabaseConnection.getInstance().getLast(pkVal, selTable, selCol));
+				 		ResultFrame le = new ResultFrame(DatabaseConnection.getInstance().getLast_Evolution(pkVal, selTable, selCol));
 				 		break;
 				 	case "evolution_V1-V2":
 				 		@SuppressWarnings("unused")

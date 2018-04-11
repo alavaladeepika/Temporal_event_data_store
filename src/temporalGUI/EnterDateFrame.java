@@ -42,7 +42,11 @@ public class EnterDateFrame {
 				//frame.setVisible(false);
 				String date = yyText.getText() + "-" + monText.getText() + "-" + dayText.getText() + " "
 						+ hhText.getText() + ":" + mmText.getText() + ":" + ssText.getText();
-				label.setText(DatabaseConnection.getInstance().getColumn_Value(pk, selTable, selCol, date));
+				label.setVisible(true);
+				//System.out.println(DatabaseConnection.getInstance().getColumn_Value(pk, selTable, selCol, date));
+				String val = DatabaseConnection.getInstance().getColumn_Value(pk, selTable, selCol, date);
+				if(val==null)	val = "No data found!";
+				label.setText(val);
 			}
 		});
 		
@@ -101,7 +105,7 @@ public class EnterDateFrame {
 		
 		JLabel lblColumnName = new JLabel("'"+selCol+"': ");
 		
-		label = new JLabel("");
+		label = new JLabel(".................");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)

@@ -107,6 +107,31 @@ public class DatabaseConnection{
     	return ColumnNames;
     }
     
+    public Map<String,String> getTempColumns(String tableName) {
+    	Map<String,String> ColumnNames = new HashMap<String,String>();
+    	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
+    			+ "and TABLE_NAME = ? and (COLUMN_NAME!='START_DATE' AND COLUMN_NAME!='END_DATE')";
+		
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.setString(1,schema);
+    		statement.setString(2,"hist_" + tableName);
+    		resultSet = statement.executeQuery();
+    		
+    		while(resultSet.next()) {
+    			String key = resultSet.getString("COLUMN_NAME"); 
+    			String value = resultSet.getString("COLUMN_TYPE");
+    			
+    			ColumnNames.put(key,value);
+        	}
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	
+    	return ColumnNames;
+    }
+    
     public Map<String,String> getPrimaryKey(String table) {
     	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
     			+ "and TABLE_NAME = ? and COLUMN_KEY = 'PRI'";
@@ -486,8 +511,9 @@ public class DatabaseConnection{
     }
     
     //first status of the column of the specified row with given pk values 
-    public ResultSet getFirst(Map<String,String> pk, String table, String column) {
-    	String query = "SELECT "+column+",START_DATE, END_DATE FROM hist_" + table + " WHERE ";
+    public ArrayList<Map<String,String>> getFirst(Map<String,String> pk, String table, String column) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
+    	String query = "SELECT "+column+",START_DATE,END_DATE FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -510,20 +536,29 @@ public class DatabaseConnection{
     		}
     	}
     	query += ")";
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
     	
-		return resultSet;
+		return result;
     }
     
   //latest status of the column of the specified row with given pk values 
-    public ResultSet getLast(Map<String,String> pk, String table, String column) {
+    public ArrayList<Map<String,String>> getLast(Map<String,String> pk, String table, String column) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query1 = "SELECT DISTINCT "+column+" FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -562,9 +597,9 @@ public class DatabaseConnection{
     		}
     	}
     	
-    	query2 += "AND "+column+" in ("+query1+")";
+    	query2 += " AND "+column+" in ("+query1+")";
     	
-    	String query = "SELECT DISTINCT "+column+" START_DATE, END_DATE FROM hist_"+table+" WHERE ";
+    	String query = "SELECT DISTINCT "+column+" , START_DATE, END_DATE FROM hist_"+table+" WHERE ";
     	i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -575,20 +610,29 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
-    	query += " AND START_DATE = ("+query2+") AND "+column+" in "+query1;
+    	query += " AND START_DATE = ("+query2+") AND "+column+" in ("+query1+")";
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-		return resultSet;
+		return result;
     }
     
     //Value that precedes the given value 'cVal' along with its START_DATE
-    public ResultSet getPrevious(Map<String,String> pk, String table, String column, String cVal) {
+    public ArrayList<Map<String,String>> getPrevious(Map<String,String> pk, String table, String column, String cVal) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query = "SELECT " + column + ", START_DATE FROM hist_"+ table+
     			" WHERE START_DATE = (SELECT MAX(START_DATE) FROM hist_"+table
     			+" WHERE START_DATE < (SELECT MIN(START_DATE) FROM hist_"+table
@@ -627,19 +671,27 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-    	return resultSet;
+    	return result;
     }
     
     //Value that follows the given value 'cVal' along with its START_DATE
-    public ResultSet getNext(Map<String,String> pk, String table, String column, String cVal) {
+    public ArrayList<Map<String,String>> getNext(Map<String,String> pk, String table, String column, String cVal) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query = "SELECT " + column + ", START_DATE FROM hist_"+ table+
     			" WHERE START_DATE = (SELECT MIN(START_DATE) FROM hist_"+table
     			+" WHERE START_DATE > (SELECT MAX(START_DATE) FROM hist_"+table
@@ -678,21 +730,28 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-    	return resultSet;
+    	return result;
     }
     
     
     //Indicates the value which precedes the current value and its timestamp, according to the specified day
-    public String getPrevious_SCALE(Map<String,String> pk, String table, String column, int yy, int mm, int dd) {
-    	String query = "SELECT "+column+" FROM hist_"+table+"WHERE ";
+    public String getPrevious_SCALE(Map<String,String> pk, String table, String column, String scale) {
+    	String query = "SELECT "+column+" FROM hist_"+table+" WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -703,16 +762,18 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
-    	query += " AND START_DATE <= (SELECT DATE_DIFF(DATE_DIFF(DATE_DIFF(NOW(),INTERVAL "+yy+" YEAR)"
-				+ ", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY)) AND "
-					+ "END_DATE > (SELECT DATE_DIFF(DATE_DIFF(DATE_DIFF(NOW(),INTERVAL "+yy+" YEAR)"
-						+", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY))";
+    	query += " AND START_DATE <= (SELECT DATE_ADD(NOW(),INTERVAL -1 " + scale.toUpperCase() + ")) AND "
+					+ "END_DATE > (SELECT DATE_ADD(NOW(),INTERVAL -1 " + scale.toUpperCase() + "))";
+    	System.out.println(query);
     	resultSet = null;
     	String colVal = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
-    		colVal = resultSet.getString(0);
+    		while(resultSet.next()) {
+    			colVal = resultSet.getString(column);
+    			break;
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
@@ -721,8 +782,8 @@ public class DatabaseConnection{
     }
     
     //Indicates the value which follows the current value and its timestamp, according to the specified day
-    public String getNext_SCALE(Map<String,String> pk, String table, String column, int yy, int mm, int dd) {
-    	String query = "SELECT "+column+" FROM hist_"+table+"WHERE ";
+    public String getNext_SCALE(Map<String,String> pk, String table, String column, String scale) {
+    	String query = "SELECT "+column+" FROM hist_"+table+" WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -733,16 +794,18 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
-    	query += " AND START_DATE <= (SELECT DATE_ADD(DATE_ADD(DATE_ADD(NOW(),INTERVAL "+yy+" YEAR)"
-    				+ ", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY)) AND "
-    					+ "END_DATE > (SELECT DATE_ADD(DATE_ADD(DATE_ADD(NOW(),INTERVAL "+yy+" YEAR)"
-    						+", INTERVAL "+mm+" MONTH), INTERVAL "+dd+" DAY))";
+    	query += " AND START_DATE <= (SELECT DATE_ADD(NOW(),INTERVAL 1 " + scale.toUpperCase() + ")) AND "
+				+ "END_DATE > (SELECT DATE_ADD(NOW(),INTERVAL 1 " + scale.toUpperCase() + "))";
+    	System.out.println(query);
     	resultSet = null;
     	String colVal = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
-    		colVal = resultSet.getString(0);
+    		while(resultSet.next()) {
+    			colVal = resultSet.getString(column);
+    			break;
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
@@ -751,7 +814,8 @@ public class DatabaseConnection{
     }
     
     //Indicates all the evolution dates of the column
-    public ResultSet getEvolution_History(Map<String,String> pk, String table, String column) {
+    public ArrayList<Map<String,String>> getEvolution_History(Map<String,String> pk, String table, String column) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query = "SELECT DISTINCT "+column+", START_DATE FROM hist_"+table+" WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -763,20 +827,29 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
     	
-    	return resultSet;
+    	return result;
     }
     
     //Indicates the evolution date to the given value
-    public ResultSet getEvolution(Map<String,String> pk, String table, String column, String val) {
+    public ArrayList<Map<String,String>> getEvolution(Map<String,String> pk, String table, String column, String val) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query = "SELECT "+column+", START_DATE, END_DATE FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -800,19 +873,28 @@ public class DatabaseConnection{
     		}
     	}
     	query += "AND "+column+"='"+val+"' ) AND "+column+"='"+val+"'";
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-    	return resultSet;
+    	return result;
     }
     
     //Indicates the first evolution date of the column
-    public ResultSet getFirst_Evolution(Map<String,String> pk, String table, String column) {
+    public ArrayList<Map<String,String>> getFirst_Evolution(Map<String,String> pk, String table, String column) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query = "SELECT "+column+", START_DATE, END_DATE FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -836,19 +918,28 @@ public class DatabaseConnection{
     		}
     	}
     	query += ")";
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-		return resultSet;
+		return result;
     }
     
     //Indicates the last evolution date of the column
-    public ResultSet getLast_Evolution(Map<String,String> pk, String table, String column) {
+    public ArrayList<Map<String,String>> getLast_Evolution(Map<String,String> pk, String table, String column) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query = "SELECT "+column+", START_DATE, END_DATE FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -861,7 +952,7 @@ public class DatabaseConnection{
     		}
     	}
     	i=0;
-    	query += " AND START_DATE = (SELECT MIN(START_DATE) FROM hist_"+ table + " WHERE ";
+    	query += " AND START_DATE = (SELECT MAX(START_DATE) FROM hist_"+ table + " WHERE ";
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
     			query += entry.getKey() + "='" + entry.getValue() + "'";
@@ -872,21 +963,30 @@ public class DatabaseConnection{
     		}
     	}
     	query += ")";
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-    	return resultSet;
+    	return result;
     }
     
   //Indicates the evolution date from ‘val1’ to ‘val2’.
-    public ResultSet getEvolutionVal12(Map<String,String> pk, String table, String column, String val1, String val2) {
+    public ArrayList<Map<String,String>> getEvolutionVal12(Map<String,String> pk, String table, String column, String val1, String val2) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	//to retrieve the start_date of val1
-    	String query_val1 = "SELECT MAX(START_DATE) FROM hist_"+table+" WHERE ";
+    	String query_val1 = "SELECT MAX(START_DATE) FROM hist_"+ table +" WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -916,15 +1016,15 @@ public class DatabaseConnection{
     	try {
     		statement = connection.prepareStatement(query_val1);
     		resultSet = statement.executeQuery();
-    		date_val1 = resultSet.getString(0);
+    		if(resultSet.next())	date_val1 = resultSet.getString("MAX(START_DATE)");
     		
     		resultSet=null;
     		statement = connection.prepareStatement(query_val2);
     		resultSet = statement.executeQuery();
-    		date_val2 = resultSet.getString(0);
+    		if(resultSet.next())	date_val2 = resultSet.getString("MIN(START_DATE)");
     		
     		if(date_val2.compareTo(date_val1)>=0) {
-    			String query = "SELECT DISTINCT"+column+", START_DATE, END_DATE FROM "+table+" WHERE ";
+    			String query = "SELECT DISTINCT "+column+", START_DATE, END_DATE FROM hist_"+table+" WHERE ";
     			i=0;
     	    	for(Map.Entry<String,String> entry:pk.entrySet()) {
     	    		if(i==0) {
@@ -937,22 +1037,30 @@ public class DatabaseConnection{
     	    	}
     	    	resultSet = null;
     	    	query += "AND START_DATE BETWEEN '"+date_val1+"' AND '"+date_val2+"'";
+    	    	System.out.println(query_val1);
+    	    	System.out.println(query_val2);
     	    	statement = connection.prepareStatement(query);
         		resultSet = statement.executeQuery();
-        		
+        		while(resultSet.next()) {
+        			Map<String,String> row = new HashMap<String,String>();
+        			row.put(column, resultSet.getString(column));
+        			row.put("START_DATE", resultSet.getString("START_DATE"));
+        			row.put("END_DATE", resultSet.getString("END_DATE"));
+        			result.add(row);
+        		}
     		}
     		
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-    	return resultSet;
+    	return result;
     	
     }
     
     //Indicates the timestamp associated to the value ‘val’
-    public ResultSet getTimestamps(Map<String,String> pk, String table, String column, String val) {
-
+    public ArrayList<Map<String,String>> getTimestamps(Map<String,String> pk, String table, String column, String val) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
     	String query = "SELECT START_DATE, END_DATE FROM hist_"+table+" WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -965,15 +1073,22 @@ public class DatabaseConnection{
     		}
     	}
     	query += " AND "+column+"='"+val+"' ORDER BY START_DATE LIMIT 1";
+    	System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put("START_DATE", resultSet.getString("START_DATE"));
+    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			result.add(row);
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();
     	}
-    	return resultSet;
+    	return result;
     }
     
     //Indicates the value associated with a date specified somewhere in the query
@@ -989,13 +1104,17 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
-    	query += " AND START_DATE <= "+date+" AND END_DATE >= "+date;
+    	query += " AND START_DATE <= '"+date+"' AND (END_DATE >= '"+date+"' OR END_DATE IS NULL)";
+    	System.out.println(query);
     	resultSet = null;
     	String colVal = null;
     	try {
     		statement = connection.prepareStatement(query);
     		resultSet = statement.executeQuery();
-    		colVal = resultSet.getString(0);
+    		while(resultSet.next()) {
+    			colVal = resultSet.getString(column);
+    			break;
+    		}
     	} 
     	catch(SQLException e){
     		e.printStackTrace();

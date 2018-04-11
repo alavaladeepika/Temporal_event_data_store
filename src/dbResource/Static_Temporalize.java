@@ -7,11 +7,11 @@ public class Static_Temporalize {
 	java.sql.PreparedStatement statement=null;
     ResultSet resultSet;
 	Map<String, Map<String, String>> temporalize;
-	ArrayList<String> hist_tables;
+	public static ArrayList<String> hist_tables;
 	
 	Static_Temporalize(Map<String, Map<String, String>> temp){
 		temporalize = temp;
-		hist_tables = new ArrayList<String>();
+		Static_Temporalize.hist_tables = new ArrayList<String>();
 	}
 	
 	public static void Execute(Map<String, Map<String, String>> t) {
@@ -22,7 +22,7 @@ public class Static_Temporalize {
 			Map<String, String> value = entry.getValue();
 			Map<String,String> PK_and_type = DatabaseConnection.getInstance().getPrimaryKey(key);
 			String new_hist_table = temp.create_hist_table(key,PK_and_type,value);
-			if(new_hist_table!=null)	temp.hist_tables.add(new_hist_table);
+			if(new_hist_table!=null)	Static_Temporalize.hist_tables.add(key);
 		}
 	}
 	

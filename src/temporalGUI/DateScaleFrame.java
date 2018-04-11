@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -19,7 +21,12 @@ public class DateScaleFrame {
 
 	private JFrame frame;
 	ButtonGroup group;
+	Map<String,String> pk = new HashMap<String,String>();
 	String selTable = null;
+	String selCol = null;
+	String selColType = null;
+	String choice = null;
+	String scale = null;
 	JRadioButton[] jRadioButton;
 	JButton btnBackToMenu, btnNext;
 	JLabel resultLabel;
@@ -27,7 +34,12 @@ public class DateScaleFrame {
 	/**
 	 * Create the application.
 	 */
-	public DateScaleFrame() {
+	public DateScaleFrame(Map<String,String> pkVal,String table,String col,String cType,String c) {
+		pk = pkVal;
+		selTable = table;
+		selCol = col;
+		selColType = cType;
+		choice = c;
 		initialize();
 		
 		btnBackToMenu.addActionListener(new ActionListener() {
@@ -42,11 +54,27 @@ public class DateScaleFrame {
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//frame.setVisible(false);
-				resultLabel.setText(DatabaseConnection.getInstance().getColumn_Value(pk, selTable, selCol, date));
+				if(jRadioButton[0].isSelected())		scale = "YEAR";
+				else if(jRadioButton[1].isSelected())	scale = "MONTH";
+				else if(jRadioButton[2].isSelected())	scale = "DAY";
+				
+				switch(choice) {
+					case "previous_scale":
+						resultLabel.setVisible(true);
+						String val1 = DatabaseConnection.getInstance().getPrevious_SCALE(pk, selTable, selCol, scale);
+						if(val1==null)	val1 = "No data found!";
+						resultLabel.setText(val1);
+						break;
+					case "next_scale":
+						resultLabel.setVisible(true);
+						String val2 = DatabaseConnection.getInstance().getNext_SCALE(pk, selTable, selCol, scale);
+						if(val2==null)	val2 = "No data found!";
+						resultLabel.setText(val2);
+						break;
+					default: 	break;
+				}
 			}	
 		});	
-			
-			
 	}
 
 	/**
@@ -63,7 +91,7 @@ public class DateScaleFrame {
 		
 		JLabel lblColumn = new JLabel("'"+selCol+"': ");
 		
-		resultLabel = new JLabel("");
+		resultLabel = new JLabel(".................");
 		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
