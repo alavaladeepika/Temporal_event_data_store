@@ -58,6 +58,10 @@ public class EnterColValFrame {
 					@SuppressWarnings("unused") 
 			 		ResultFrame t = new ResultFrame(DatabaseConnection.getInstance().getTimestamps(pk, selTable, selCol, colVal));
 			 		break;
+				case "this_timestampname":
+					@SuppressWarnings("unused") 
+			 		OptTimestampNameFrame tp = new OptTimestampNameFrame(pk,selTable,selCol,colVal);
+			 		break;
 				default: break;
 					
 				}

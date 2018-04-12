@@ -346,7 +346,7 @@ public class DatabaseConnection{
    		String update_trigger = onUpdate_Trigger(table,hist_table,pk,col);
    		String delete_trigger = onDelete_Trigger(table,hist_table,pk,col);
    		
-   		File file = new File("/home/oormila/git/Temporal_event_data_store/triggers_queries.txt");
+   		File file = new File("/home/deepika/eclipse-workspace/Temporal_Event_Store/triggers_queries.txt");
 	   	try {
 			file.createNewFile();
 			FileWriter output = new FileWriter(file);

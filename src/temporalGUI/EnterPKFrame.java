@@ -105,7 +105,8 @@ public class EnterPKFrame {
 				 		EnterDateFrame tv = new EnterDateFrame(pkVal,selTable,selCol);
 				 		break;
 				 	case "this_timestampname":
-				 		//@SuppressWarnings("unused") 
+				 		@SuppressWarnings("unused")
+				 		EnterColValFrame tn = new EnterColValFrame(pkVal,selTable,selCol,selColType,choice);
 				 		break;
 				 	default:
 				 		break;
