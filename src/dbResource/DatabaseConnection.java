@@ -206,8 +206,13 @@ public class DatabaseConnection{
     			query += "," + entry.getKey() + " " + entry.getValue();
     		}
     	}
+    	if(i==1) query += ",";
 		for(Map.Entry<String,String> entry:col.entrySet()) {
-			query += "," + entry.getKey() + " " + entry.getValue();
+			if(i==1) {
+				query += entry.getKey() + " " + entry.getValue();
+				i=0;
+			}
+			else query += "," + entry.getKey() + " " + entry.getValue();
 		}
 		query += ", START_DATE DATETIME DEFAULT NOW(), END_DATE DATETIME, UNIQUE(";
 		i=0;
@@ -220,11 +225,16 @@ public class DatabaseConnection{
     			query += "," + entry.getKey();
     		}
     	}
+    	if(i==1) query += ",";
     	for(Map.Entry<String,String> entry:col.entrySet()) {
-			query += "," + entry.getKey();
+    		if(i==1) {
+				query += entry.getKey();
+				i=0;
+			}
+			else query += "," + entry.getKey();
 		}
 		query += ",START_DATE))";
-		//System.out.println(query);
+		System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
@@ -275,7 +285,7 @@ public class DatabaseConnection{
     			i=1;
     		}
     		else {
-    			query += "," + entry.getKey() + "= NEW." + entry.getKey();
+    			query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
     		}
     	}
     	query += " AND END_DATE is NULL; insert into " + hist_table + " set ";
@@ -294,7 +304,7 @@ public class DatabaseConnection{
     	}
     	query += "; END";
     	
-    	//System.out.println(query);
+    	System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
@@ -316,10 +326,10 @@ public class DatabaseConnection{
     			i=1;
     		}
     		else {
-    			query += "," + entry.getKey() + "= OLD." + entry.getKey();
+    			query += " AND " + entry.getKey() + "= OLD." + entry.getKey();
     		}
     	}
-    	query += " and END_DATE is NULL; END";
+    	query += " AND END_DATE is NULL; END";
     	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
@@ -336,7 +346,7 @@ public class DatabaseConnection{
    		String update_trigger = onUpdate_Trigger(table,hist_table,pk,col);
    		String delete_trigger = onDelete_Trigger(table,hist_table,pk,col);
    		
-   		File file = new File("/home/deepika/eclipse-workspace/Temporal_Event_Store/triggers_queries.txt");
+   		File file = new File("/home/oormila/git/Temporal_event_data_store/triggers_queries.txt");
 	   	try {
 			file.createNewFile();
 			FileWriter output = new FileWriter(file);
@@ -816,7 +826,7 @@ public class DatabaseConnection{
     //Indicates all the evolution dates of the column
     public ArrayList<Map<String,String>> getEvolution_History(Map<String,String> pk, String table, String column) {
     	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
-    	String query = "SELECT DISTINCT "+column+", START_DATE FROM hist_"+table+" WHERE ";
+    	String query = "SELECT "+column+", MIN(START_DATE) FROM hist_"+table+" WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -827,6 +837,7 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
+    	query += "GROUP BY "+column;
     	System.out.println(query);
     	resultSet = null;
     	try {
@@ -835,8 +846,7 @@ public class DatabaseConnection{
     		while(resultSet.next()) {
     			Map<String,String> row = new HashMap<String,String>();
     			row.put(column, resultSet.getString(column));
-    			row.put("START_DATE", resultSet.getString("START_DATE"));
-    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			row.put("START_DATE", resultSet.getString("MIN(START_DATE)"));
     			result.add(row);
     		}
     	} 
@@ -850,7 +860,7 @@ public class DatabaseConnection{
     //Indicates the evolution date to the given value
     public ArrayList<Map<String,String>> getEvolution(Map<String,String> pk, String table, String column, String val) {
     	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
-    	String query = "SELECT "+column+", START_DATE, END_DATE FROM hist_" + table + " WHERE ";
+    	String query = "SELECT "+column+", DATE(START_DATE), DATE(END_DATE) FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -873,7 +883,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += "AND "+column+"='"+val+"' ) AND "+column+"='"+val+"'";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -881,8 +891,8 @@ public class DatabaseConnection{
     		while(resultSet.next()) {
     			Map<String,String> row = new HashMap<String,String>();
     			row.put(column, resultSet.getString(column));
-    			row.put("START_DATE", resultSet.getString("START_DATE"));
-    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			row.put("START_DATE", resultSet.getString("DATE(START_DATE)"));
+    			row.put("END_DATE", resultSet.getString("DATE(END_DATE)"));
     			result.add(row);
     		}
     	} 
@@ -895,7 +905,7 @@ public class DatabaseConnection{
     //Indicates the first evolution date of the column
     public ArrayList<Map<String,String>> getFirst_Evolution(Map<String,String> pk, String table, String column) {
     	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
-    	String query = "SELECT "+column+", START_DATE, END_DATE FROM hist_" + table + " WHERE ";
+    	String query = "SELECT DATE(START_DATE), DATE(END_DATE) FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -925,9 +935,8 @@ public class DatabaseConnection{
     		resultSet = statement.executeQuery();
     		while(resultSet.next()) {
     			Map<String,String> row = new HashMap<String,String>();
-    			row.put(column, resultSet.getString(column));
-    			row.put("START_DATE", resultSet.getString("START_DATE"));
-    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			row.put("START_DATE", resultSet.getString("DATE(START_DATE)"));
+    			row.put("END_DATE", resultSet.getString("DATE(END_DATE)"));
     			result.add(row);
     		}
     	} 
@@ -940,7 +949,7 @@ public class DatabaseConnection{
     //Indicates the last evolution date of the column
     public ArrayList<Map<String,String>> getLast_Evolution(Map<String,String> pk, String table, String column) {
     	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
-    	String query = "SELECT "+column+", START_DATE, END_DATE FROM hist_" + table + " WHERE ";
+    	String query = "SELECT DATE(START_DATE), DATE(END_DATE) FROM hist_" + table + " WHERE ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -970,9 +979,8 @@ public class DatabaseConnection{
     		resultSet = statement.executeQuery();
     		while(resultSet.next()) {
     			Map<String,String> row = new HashMap<String,String>();
-    			row.put(column, resultSet.getString(column));
-    			row.put("START_DATE", resultSet.getString("START_DATE"));
-    			row.put("END_DATE", resultSet.getString("END_DATE"));
+    			row.put("START_DATE", resultSet.getString("DATE(START_DATE)"));
+    			row.put("END_DATE", resultSet.getString("DATE(END_DATE)"));
     			result.add(row);
     		}
     	} 
@@ -1123,7 +1131,49 @@ public class DatabaseConnection{
     }
     
     
-    
+    public ArrayList<Map<String,String>> getColumn_Timestamp_Name(Map<String,String> pk, String table, String column, String colVal, String timestamp_name) {
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
+    	String query = "SELECT "+column+", "+timestamp_name.toUpperCase()+"(START_DATE), "+timestamp_name.toUpperCase()+"(END_DATE) FROM hist_" + table + " WHERE ";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	i=0;
+    	query += " AND START_DATE = (SELECT MIN(START_DATE) FROM hist_"+ table + " WHERE ";
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "='" + entry.getValue() + "'";
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
+    		}
+    	}
+    	query += "AND "+column+"='"+colVal+"' ) AND "+column+"='"+colVal+"'";
+    	System.out.println(query);
+    	resultSet = null;
+    	try {
+    		statement = connection.prepareStatement(query);
+    		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+    			row.put(column, resultSet.getString(column));
+    			row.put("START_DATE("+timestamp_name.toUpperCase()+")", resultSet.getString(timestamp_name.toUpperCase()+"(START_DATE)"));
+    			row.put("END_DATE("+timestamp_name.toUpperCase()+")", resultSet.getString(timestamp_name.toUpperCase()+"(END_DATE)"));
+    			result.add(row);
+    		}
+    	} 
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	return result;
+    }
     
     public void closeConnection() {
     	try {

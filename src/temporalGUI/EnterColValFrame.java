@@ -40,7 +40,6 @@ public class EnterColValFrame {
 				//frame.setVisible(false);
 				frame.dispose();
 				
-				@SuppressWarnings("unused")
 				String colVal = textField1.getText();
 				switch(choice) {
 				case "next":
