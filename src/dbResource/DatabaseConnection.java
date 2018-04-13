@@ -340,19 +340,82 @@ public class DatabaseConnection{
     	}
     	return query;
 	}
+	
+	public String beforeInsert_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+    	String query = "create trigger before_hist_" + table + "_insert before insert on hist_" +
+    			table + " for each row begin IF(EXISTS(SELECT * FROM hist_"+table+" where ";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "= NEW." + entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
+    		}
+    	}
+    	for(Map.Entry<String,String> entry:col.entrySet()) {
+    		query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
+    	}
+    	query += " AND START_DATE <= new.END_DATE AND END_DATE >= new.START_DATE)) THEN"
+    			+ " SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'INSERT failed due to overlap of dates'; END IF; END";
+    	System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.execute();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	return query;
+    }
+	
+	public String beforeUpdate_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+    	String query = "create trigger before_hist_" + table + "_update before update on hist_" +
+    			table + " for each row begin IF(EXISTS(SELECT * FROM hist_"+table+" where ";
+    	int i=0;
+    	for(Map.Entry<String,String> entry:pk.entrySet()) {
+    		if(i==0) {
+    			query += entry.getKey() + "= NEW." + entry.getKey();
+    			i=1;
+    		}
+    		else {
+    			query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
+    		}
+    	}
+    	for(Map.Entry<String,String> entry:col.entrySet()) {
+    		query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
+    	}
+    	query += " AND START_DATE <= new.END_DATE AND END_DATE >= new.START_DATE)) THEN "
+    			+ "SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'UPDATE failed due to overlap of dates'; END IF; END";
+    	System.out.println(query);
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.execute();
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	return query;
+    }
     
     public void add_Triggers(String table,String hist_table,Map<String,String> pk,Map<String,String> col){
-   		String insert_trigger = onInsert_Trigger(table,hist_table,pk,col);
-   		String update_trigger = onUpdate_Trigger(table,hist_table,pk,col);
-   		String delete_trigger = onDelete_Trigger(table,hist_table,pk,col);
+   		String after_insert_trigger = onInsert_Trigger(table,hist_table,pk,col);
+   		String after_update_trigger = onUpdate_Trigger(table,hist_table,pk,col);
+   		String after_delete_trigger = onDelete_Trigger(table,hist_table,pk,col);
+   		
+   		String before_insert_trigger = beforeInsert_Trigger(table,hist_table,pk,col);
+   		String before_update_trigger = beforeUpdate_Trigger(table,hist_table,pk,col);
    		
    		File file = new File("/home/deepika/eclipse-workspace/Temporal_Event_Store/triggers_queries.txt");
 	   	try {
 			file.createNewFile();
 			FileWriter output = new FileWriter(file);
-			output.write(insert_trigger + "\n");
-			output.write(update_trigger + "\n");
-			output.write(delete_trigger + "\n");
+			output.write(after_insert_trigger + "\n");
+			output.write(after_update_trigger + "\n");
+			output.write(after_delete_trigger + "\n");
+			output.write(before_insert_trigger + "\n");
+			output.write(before_update_trigger + "\n");
 			output.close();
 		} 
 	   	catch (IOException e) {
