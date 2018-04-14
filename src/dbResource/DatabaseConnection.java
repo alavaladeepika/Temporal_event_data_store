@@ -32,7 +32,7 @@ public class DatabaseConnection{
             //System.out.println("Driver Not Found: " + e);
         	WelcomeFrame.showAlertMessage("Driver not Found!");
         	return;
-        }
+        } 
 
         String url = "jdbc:mysql://127.0.0.1:3306/"+schema+"?useSSL=true";
         try
@@ -357,7 +357,7 @@ public class DatabaseConnection{
     	for(Map.Entry<String,String> entry:col.entrySet()) {
     		query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
     	}
-    	query += " AND START_DATE <= new.END_DATE AND END_DATE >= new.START_DATE)) THEN"
+    	query += " AND START_DATE < new.END_DATE AND END_DATE > new.START_DATE)) THEN"
     			+ " SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'INSERT failed due to overlap of dates'; END IF; END";
     	System.out.println(query);
     	try {
@@ -386,7 +386,7 @@ public class DatabaseConnection{
     	for(Map.Entry<String,String> entry:col.entrySet()) {
     		query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
     	}
-    	query += " AND START_DATE <= new.END_DATE AND END_DATE >= new.START_DATE)) THEN "
+    	query += " AND START_DATE < new.END_DATE AND END_DATE > new.START_DATE)) THEN "
     			+ "SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'UPDATE failed due to overlap of dates'; END IF; END";
     	System.out.println(query);
     	try {
