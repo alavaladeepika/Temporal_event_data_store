@@ -13,6 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import initGUI.MenuFrame;
+
 public class ResultFrame {
 
 	private JFrame frame;
@@ -32,7 +34,7 @@ public class ResultFrame {
 				//frame.setVisible(false);
 				frame.dispose();
 				@SuppressWarnings("unused")
-				TemporalMenuFrame m = new TemporalMenuFrame();
+				MenuFrame m = new MenuFrame();
 			}	
 				
 		});

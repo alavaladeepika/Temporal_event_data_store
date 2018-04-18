@@ -3,6 +3,7 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
+import dbResource.DatabaseConnection;
 import temporalGUI.TemporalMenuFrame;
 
 import javax.swing.GroupLayout;
@@ -19,6 +20,7 @@ public class MenuFrame {
 	private JButton btnUpdate;
 	private JButton btnDelete;
 	private JButton btnTemporalOperators;
+	private JButton btnJoinTables;
 	public static Map<String,Map<String,String>> TempTables;
 	CRUD_TablesFrame tFrame;
 
@@ -63,7 +65,14 @@ public class MenuFrame {
 				TemporalMenuFrame tempFrame = new TemporalMenuFrame();
 			}
 		});
-		
+		btnJoinTables.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//frame.setVisible(false);
+				frame.dispose();
+				@SuppressWarnings("unused")
+				JoinTablesFrame joinFrame = new JoinTablesFrame(DatabaseConnection.getInstance().getPosTemporalJoinTables());
+			}
+		});
 	}
 
 	/**
@@ -79,18 +88,20 @@ public class MenuFrame {
 		btnDelete = new JButton("DELETE");
 		btnTemporalOperators = new JButton("TEMPORAL OPERATORS");
 		btnSelect = new JButton("SELECT");
+		btnJoinTables = new JButton("JOIN TABLES");
 		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
 					.addGap(420)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnInsert, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-						.addComponent(btnSelect, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-						.addComponent(btnUpdate, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-						.addComponent(btnTemporalOperators, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-						.addComponent(btnDelete, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnJoinTables, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+						.addComponent(btnInsert, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+						.addComponent(btnSelect, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+						.addComponent(btnUpdate, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+						.addComponent(btnTemporalOperators, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+						.addComponent(btnDelete, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
 					.addGap(337))
 		);
 		groupLayout.setVerticalGroup(
@@ -106,7 +117,9 @@ public class MenuFrame {
 					.addComponent(btnDelete)
 					.addGap(99)
 					.addComponent(btnTemporalOperators)
-					.addContainerGap(288, Short.MAX_VALUE))
+					.addGap(91)
+					.addComponent(btnJoinTables)
+					.addContainerGap(142, Short.MAX_VALUE))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		frame.setVisible(true);

@@ -25,7 +25,7 @@ public class DatabaseConnection{
 
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            System.out.println("Driver Found");
+            //System.out.println("Driver Found");
         }
 
         catch (ClassNotFoundException e){
@@ -38,7 +38,7 @@ public class DatabaseConnection{
         try
         {
             connection = (Connection)DriverManager.getConnection(url, username, password);
-            System.out.println("Successfully Connected to Database");
+            //System.out.println("Successfully Connected to Database");
             WelcomeFrame.success = true;
             
         }
@@ -116,6 +116,31 @@ public class DatabaseConnection{
     		statement = connection.prepareStatement(query);
     		statement.setString(1,schema);
     		statement.setString(2,"hist_" + tableName);
+    		resultSet = statement.executeQuery();
+    		
+    		while(resultSet.next()) {
+    			String key = resultSet.getString("COLUMN_NAME"); 
+    			String value = resultSet.getString("COLUMN_TYPE");
+    			
+    			ColumnNames.put(key,value);
+        	}
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	
+    	return ColumnNames;
+    }
+    
+    public Map<String,String> getJoinColumns(String tableName) {
+    	Map<String,String> ColumnNames = new HashMap<String,String>();
+    	String query = "select COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS where TABLE_SCHEMA = ? "
+    			+ "and TABLE_NAME = ? and (COLUMN_NAME!='START_DATE' AND COLUMN_NAME!='END_DATE')";
+		
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.setString(1,schema);
+    		statement.setString(2,tableName);
     		resultSet = statement.executeQuery();
     		
     		while(resultSet.next()) {
@@ -234,7 +259,7 @@ public class DatabaseConnection{
 			else query += "," + entry.getKey();
 		}
 		query += ",START_DATE))";
-		System.out.println(query);
+		//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
@@ -304,7 +329,7 @@ public class DatabaseConnection{
     	}
     	query += "; END";
     	
-    	System.out.println(query);
+    	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
@@ -341,7 +366,7 @@ public class DatabaseConnection{
     	return query;
 	}
 	
-	public String beforeInsert_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+	public String uniqueness_beforeInsert_Trigger(String table,String hist_table,Map<String,String> pk) {
     	String query = "create trigger before_hist_" + table + "_insert before insert on hist_" +
     			table + " for each row begin IF(EXISTS(SELECT * FROM hist_"+table+" where ";
     	int i=0;
@@ -354,12 +379,9 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
     		}
     	}
-    	for(Map.Entry<String,String> entry:col.entrySet()) {
-    		query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
-    	}
-    	query += " AND START_DATE < new.END_DATE AND END_DATE > new.START_DATE)) THEN"
+    	query += " AND (START_DATE < new.END_DATE OR new.END_DATE is NULL) AND (END_DATE > new.START_DATE OR END_DATE IS NULL))) THEN"
     			+ " SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'INSERT failed due to overlap of dates'; END IF; END";
-    	System.out.println(query);
+    	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
@@ -370,7 +392,7 @@ public class DatabaseConnection{
     	return query;
     }
 	
-	public String beforeUpdate_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+	public String uniqueness_beforeUpdate_Trigger(String table,String hist_table,Map<String,String> pk) {
     	String query = "create trigger before_hist_" + table + "_update before update on hist_" +
     			table + " for each row begin IF(EXISTS(SELECT * FROM hist_"+table+" where ";
     	int i=0;
@@ -383,12 +405,9 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
     		}
     	}
-    	for(Map.Entry<String,String> entry:col.entrySet()) {
-    		query += " AND " + entry.getKey() + "= NEW." + entry.getKey();
-    	}
-    	query += " AND START_DATE < new.END_DATE AND END_DATE > new.START_DATE)) THEN "
+    	query += " AND (START_DATE < new.END_DATE OR new.END_DATE is NULL) AND (END_DATE > new.START_DATE OR END_DATE IS NULL))) THEN "
     			+ "SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'UPDATE failed due to overlap of dates'; END IF; END";
-    	System.out.println(query);
+    	//System.out.println(query);
     	try {
     		statement = connection.prepareStatement(query);
     		statement.execute();
@@ -398,14 +417,14 @@ public class DatabaseConnection{
     	}
     	return query;
     }
-    
+	
     public void add_Triggers(String table,String hist_table,Map<String,String> pk,Map<String,String> col){
    		String after_insert_trigger = onInsert_Trigger(table,hist_table,pk,col);
    		String after_update_trigger = onUpdate_Trigger(table,hist_table,pk,col);
    		String after_delete_trigger = onDelete_Trigger(table,hist_table,pk,col);
    		
-   		String before_insert_trigger = beforeInsert_Trigger(table,hist_table,pk,col);
-   		String before_update_trigger = beforeUpdate_Trigger(table,hist_table,pk,col);
+   		String uniqueness_before_insert_trigger = uniqueness_beforeInsert_Trigger(table,hist_table,pk);
+   		String uniqueness_before_update_trigger = uniqueness_beforeUpdate_Trigger(table,hist_table,pk);
    		
    		File file = new File("/home/deepika/eclipse-workspace/Temporal_Event_Store/triggers_queries.txt");
 	   	try {
@@ -414,8 +433,8 @@ public class DatabaseConnection{
 			output.write(after_insert_trigger + "\n");
 			output.write(after_update_trigger + "\n");
 			output.write(after_delete_trigger + "\n");
-			output.write(before_insert_trigger + "\n");
-			output.write(before_update_trigger + "\n");
+			output.write(uniqueness_before_insert_trigger + "\n");
+			output.write(uniqueness_before_update_trigger + "\n");
 			output.close();
 		} 
 	   	catch (IOException e) {
@@ -609,7 +628,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += ")";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -684,7 +703,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += " AND START_DATE = ("+query2+") AND "+column+" in ("+query1+")";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -744,7 +763,7 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -803,7 +822,7 @@ public class DatabaseConnection{
     			query += " AND " + entry.getKey() + "='" + entry.getValue() + "'";
     		}
     	}
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -837,7 +856,7 @@ public class DatabaseConnection{
     	}
     	query += " AND START_DATE <= (SELECT DATE_ADD(NOW(),INTERVAL -1 " + scale.toUpperCase() + ")) AND "
 					+ "END_DATE > (SELECT DATE_ADD(NOW(),INTERVAL -1 " + scale.toUpperCase() + "))";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	String colVal = null;
     	try {
@@ -869,7 +888,7 @@ public class DatabaseConnection{
     	}
     	query += " AND START_DATE <= (SELECT DATE_ADD(NOW(),INTERVAL 1 " + scale.toUpperCase() + ")) AND "
 				+ "END_DATE > (SELECT DATE_ADD(NOW(),INTERVAL 1 " + scale.toUpperCase() + "))";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	String colVal = null;
     	try {
@@ -901,7 +920,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += "GROUP BY "+column;
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -991,7 +1010,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += ")";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -1035,7 +1054,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += ")";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -1108,8 +1127,8 @@ public class DatabaseConnection{
     	    	}
     	    	resultSet = null;
     	    	query += "AND START_DATE BETWEEN '"+date_val1+"' AND '"+date_val2+"'";
-    	    	System.out.println(query_val1);
-    	    	System.out.println(query_val2);
+    	    	//System.out.println(query_val1);
+    	    	//System.out.println(query_val2);
     	    	statement = connection.prepareStatement(query);
         		resultSet = statement.executeQuery();
         		while(resultSet.next()) {
@@ -1144,7 +1163,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += " AND "+column+"='"+val+"' ORDER BY START_DATE LIMIT 1";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -1176,7 +1195,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += " AND START_DATE <= '"+date+"' AND (END_DATE >= '"+date+"' OR END_DATE IS NULL)";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	String colVal = null;
     	try {
@@ -1219,7 +1238,7 @@ public class DatabaseConnection{
     		}
     	}
     	query += "AND "+column+"='"+colVal+"' ) AND "+column+"='"+colVal+"'";
-    	System.out.println(query);
+    	//System.out.println(query);
     	resultSet = null;
     	try {
     		statement = connection.prepareStatement(query);
@@ -1238,6 +1257,89 @@ public class DatabaseConnection{
     	return result;
     }
     
+    //Temporal Join(Assume to be of the same schema)
+    public ArrayList<String[][]> getPosTemporalJoinTables() {
+    	String query = "SELECT TABLE_NAME,COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM"
+    			+ " INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = ? AND TABLE_SCHEMA = ?";
+    	ArrayList<String[][]> tempJoinTables = new ArrayList<String[][]>();
+    	try {
+    		statement = connection.prepareStatement(query);
+    		statement.setString(1,schema);
+    		statement.setString(2,schema);
+    		resultSet = statement.executeQuery();
+    		
+    		while(resultSet.next()) {
+    			String[][] joinInfo = new String[2][2];
+    			joinInfo[0][0] = resultSet.getString("TABLE_NAME");
+    			joinInfo[0][1] = resultSet.getString("COLUMN_NAME");
+    			joinInfo[1][0] = resultSet.getString("REFERENCED_TABLE_NAME");
+    			joinInfo[1][1] = resultSet.getString("REFERENCED_COLUMN_NAME");
+    			
+    			tempJoinTables.add(joinInfo);
+        	}
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	
+    	return tempJoinTables;
+    }
+    
+    public ArrayList<Map<String,String>> join_tables(String[][] join_info,String type,ArrayList<String> col) {
+    	String query = null;
+    	resultSet = null;
+    	ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
+    	if(type.equals("normal")) {
+    		query = TablesJoinQuery(join_info,col);
+    	}
+    	else if(type.equals("temporal")) {
+    		query = temporal_join(join_info,col);
+    	}
+    	
+    	try {
+    		statement = connection.prepareStatement(query);
+    		resultSet = statement.executeQuery();
+    		while(resultSet.next()) {
+    			Map<String,String> row = new HashMap<String,String>();
+   		    	for(int i=0;i<col.size();i++) {
+   		    		row.put(col.get(i),resultSet.getString(col.get(i)));
+   		    	}
+    			result.add(row);
+    		}
+    	}
+    	catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	return result;
+    }
+    
+    public String TablesJoinQuery(String[][] join_info,ArrayList<String> col) {
+		String query = "SELECT " + col.get(0);
+    	for(int i=0;i<col.size();i++) {
+   			query += ", " + col.get(i);
+    	}
+    	query += " from "+join_info[0][0]+" INNER JOIN "+ join_info[1][0]
+    			+ " ON " +join_info[0][0]+"."+join_info[0][1]+" = " + join_info[1][0] +"." + join_info[1][1];
+    	
+    	//System.out.println(query);
+    	return query;
+    }
+    
+	public String temporal_join(String[][] join_info,ArrayList<String> col) {
+		String query = "SELECT " + col.get(0);
+    	for(int i=0;i<col.size();i++) {
+   			query += ", " + col.get(i);
+    	}
+    	query += " from "+join_info[0][0]+" INNER JOIN "+ join_info[1][0]
+    			+ " ON " +join_info[0][0]+"."+join_info[0][1]+" = " + join_info[1][0] +"." + join_info[1][1]
+						+ " and (" + join_info[0][0] + ".START_DATE < " + join_info[1][0] + ".END_DATE or "+join_info[1][0]+".END_DATE is NULL) "
+							+ "and ("+join_info[0][0]+".END_DATE > "+join_info[1][0]+".START_DATE or "+join_info[0][0]+".END_DATE is NULL)";
+    	//System.out.println(query);
+    	return query;
+	}
+	
+	
+	
     public void closeConnection() {
     	try {
     		if(connection!=null) {
