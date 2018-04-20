@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 
 import initGUI.MenuFrame;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class TemporalMenuFrame {
 
@@ -18,6 +19,9 @@ public class TemporalMenuFrame {
 					btnNextScale, btnEvolutionHistory, btnEvolution,
 					btnFirstEvolution, btnLastEvolution, btnEvolutionvv, 
 					btnTimestamps, btnThisValue, btnThisTimestampname, btnBack;
+	private JButton btnOverlaps;
+	private JButton btnCoalesce;
+	private JButton btnDifference;
 
 	/**
 	 * Create the application.
@@ -150,6 +154,33 @@ public class TemporalMenuFrame {
 			}
 		});
 		
+		btnOverlaps.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//frame.setVisible(false);
+				frame.dispose();
+				@SuppressWarnings("unused")
+				OverlapsTablesFrame oo = new OverlapsTablesFrame("overlaps");
+			}
+		});
+		
+		btnCoalesce.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//frame.setVisible(false);
+				frame.dispose();
+				@SuppressWarnings("unused")
+				TablesFrame co = new TablesFrame("coalesce");
+			}
+		});
+		
+		btnDifference.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//frame.setVisible(false);
+				frame.dispose();
+				@SuppressWarnings("unused")
+				OverlapsTablesFrame dp = new OverlapsTablesFrame("difference");
+			}
+		});
+		
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//frame.setVisible(false);
@@ -186,34 +217,42 @@ public class TemporalMenuFrame {
 		btnThisValue = new JButton("THIS VALUE");
 		btnThisTimestampname = new JButton("THIS TIMESTAMP_NAME");
 		btnBack = new JButton("BACK");
+		
+		btnOverlaps = new JButton("OVERLAPS");
+		btnCoalesce = new JButton("COALESCE");
+		btnDifference = new JButton("DIFFERENCE");
 
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(156)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(btnFirst, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-								.addComponent(btnLast, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnPrevious, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnNext, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnPreviousScale, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnNextScale, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnEvolutionHistory, GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-								.addComponent(btnEvolution, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnFirstEvolution, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnLastEvolution, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnEvolutionvv, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnTimestamps, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnThisValue, GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-								.addComponent(btnThisTimestampname, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(22)
-							.addComponent(lblSelectOneOf)))
-					.addContainerGap(626, Short.MAX_VALUE))
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+					.addGap(156)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(btnFirst, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+						.addComponent(btnLast, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnPrevious, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNext, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnPreviousScale, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNextScale, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnEvolutionHistory, GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+						.addComponent(btnEvolution, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnFirstEvolution, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnLastEvolution, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnEvolutionvv, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnTimestamps, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnThisValue, GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+						.addComponent(btnThisTimestampname, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED, 351, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(btnDifference, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnCoalesce, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnOverlaps, GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE))
+					.addGap(83))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(22)
+					.addComponent(lblSelectOneOf)
+					.addContainerGap(715, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap(522, Short.MAX_VALUE)
 					.addComponent(btnBack, GroupLayout.PREFERRED_SIZE, 164, GroupLayout.PREFERRED_SIZE)
 					.addGap(314))
@@ -221,39 +260,48 @@ public class TemporalMenuFrame {
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(23)
-					.addComponent(lblSelectOneOf)
-					.addGap(26)
-					.addComponent(btnFirst, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(btnLast)
-					.addGap(18)
-					.addComponent(btnPrevious)
-					.addGap(18)
-					.addComponent(btnNext)
-					.addGap(18)
-					.addComponent(btnPreviousScale)
-					.addGap(18)
-					.addComponent(btnNextScale)
-					.addGap(18)
-					.addComponent(btnEvolutionHistory)
-					.addGap(18)
-					.addComponent(btnEvolution)
-					.addGap(18)
-					.addComponent(btnFirstEvolution)
-					.addGap(18)
-					.addComponent(btnLastEvolution)
-					.addGap(18)
-					.addComponent(btnEvolutionvv)
-					.addGap(18)
-					.addComponent(btnTimestamps)
-					.addGap(18)
-					.addComponent(btnThisValue)
-					.addGap(18)
-					.addComponent(btnThisTimestampname)
-					.addGap(189)
-					.addComponent(btnBack)
-					.addContainerGap(138, Short.MAX_VALUE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(23)
+							.addComponent(lblSelectOneOf)
+							.addGap(26)
+							.addComponent(btnFirst, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(btnLast)
+							.addGap(18)
+							.addComponent(btnPrevious)
+							.addGap(18)
+							.addComponent(btnNext)
+							.addGap(18)
+							.addComponent(btnPreviousScale)
+							.addGap(18)
+							.addComponent(btnNextScale)
+							.addGap(18)
+							.addComponent(btnEvolutionHistory)
+							.addGap(18)
+							.addComponent(btnEvolution)
+							.addGap(18)
+							.addComponent(btnFirstEvolution)
+							.addGap(18)
+							.addComponent(btnLastEvolution)
+							.addGap(18)
+							.addComponent(btnEvolutionvv)
+							.addGap(18)
+							.addComponent(btnTimestamps)
+							.addGap(18)
+							.addComponent(btnThisValue)
+							.addGap(18)
+							.addComponent(btnThisTimestampname)
+							.addGap(189)
+							.addComponent(btnBack))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(228)
+							.addComponent(btnOverlaps)
+							.addGap(56)
+							.addComponent(btnCoalesce)
+							.addGap(55)
+							.addComponent(btnDifference)))
+					.addContainerGap(108, Short.MAX_VALUE))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 	}

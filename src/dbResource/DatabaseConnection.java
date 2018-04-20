@@ -220,7 +220,8 @@ public class DatabaseConnection{
     }
     
     public String create_table(String table,String hist_table,Map<String,String> pk,Map<String, String> col) {
-    	String query = "CREATE TABLE IF NOT EXISTS " + hist_table + "(" ;
+    	String drop_query = "drop table IF EXISTS "+hist_table ;
+    	String query = "CREATE TABLE " + hist_table + "(" ;
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
     		if(i==0) {
@@ -261,6 +262,9 @@ public class DatabaseConnection{
 		query += ",START_DATE))";
 		//System.out.println(query);
     	try {
+    		statement = connection.prepareStatement(drop_query);
+    		statement.execute();
+    		
     		statement = connection.prepareStatement(query);
     		statement.execute();
     		copy_data(table,hist_table,pk,col);
@@ -273,6 +277,7 @@ public class DatabaseConnection{
     }
     
     public String onInsert_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+    	String drop_query = "drop trigger IF EXISTS after_"+table+"_insert" ;
     	String query = "create trigger after_" + table + "_insert after insert on " +
     			table + " for each row begin insert into " + hist_table + " set " ;
     	int i=0;
@@ -291,6 +296,9 @@ public class DatabaseConnection{
     	query += "; END";
     	//System.out.println(query);
     	try {
+    		statement = connection.prepareStatement(drop_query);
+    		statement.execute();
+    		
     		statement = connection.prepareStatement(query);
     		statement.execute();
     	}
@@ -301,6 +309,7 @@ public class DatabaseConnection{
     }
     
     public String onUpdate_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+    	String drop_query = "drop trigger IF EXISTS after_"+table+"_update" ;
     	String query = "create trigger after_" + table + "_update after update on " +
     			table + " for each row begin update "+ hist_table + " set END_DATE = NOW() where "; 
     	int i=0;
@@ -331,6 +340,9 @@ public class DatabaseConnection{
     	
     	//System.out.println(query);
     	try {
+    		statement = connection.prepareStatement(drop_query);
+    		statement.execute();
+    		
     		statement = connection.prepareStatement(query);
     		statement.execute();
     	}
@@ -341,6 +353,7 @@ public class DatabaseConnection{
     }
 
 	public String onDelete_Trigger(String table,String hist_table,Map<String,String> pk,Map<String,String> col) {
+		String drop_query = "drop trigger IF EXISTS after_"+table+"_delete";
 		String query = "create trigger after_" + table + "_delete after delete on " +
     			table + " for each row begin update " + hist_table + " set END_DATE = NOW()"
     					+ " where ";
@@ -357,6 +370,9 @@ public class DatabaseConnection{
     	query += " AND END_DATE is NULL; END";
     	//System.out.println(query);
     	try {
+    		statement = connection.prepareStatement(drop_query);
+    		statement.execute();
+    		
     		statement = connection.prepareStatement(query);
     		statement.execute();
     	}
@@ -367,7 +383,8 @@ public class DatabaseConnection{
 	}
 	
 	public String uniqueness_beforeInsert_Trigger(String table,String hist_table,Map<String,String> pk) {
-    	String query = "create trigger before_hist_" + table + "_insert before insert on hist_" +
+    	String drop_query = "drop trigger IF EXISTS before_"+hist_table+"_insert";
+    	String query = "create trigger before_"+hist_table + "_insert before insert on hist_" +
     			table + " for each row begin IF(EXISTS(SELECT * FROM hist_"+table+" where ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -383,6 +400,9 @@ public class DatabaseConnection{
     			+ " SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'INSERT failed due to overlap of dates'; END IF; END";
     	//System.out.println(query);
     	try {
+    		statement = connection.prepareStatement(drop_query);
+    		statement.execute();
+    		
     		statement = connection.prepareStatement(query);
     		statement.execute();
     	}
@@ -393,7 +413,8 @@ public class DatabaseConnection{
     }
 	
 	public String uniqueness_beforeUpdate_Trigger(String table,String hist_table,Map<String,String> pk) {
-    	String query = "create trigger before_hist_" + table + "_update before update on hist_" +
+    	String drop_query = "drop trigger  IF EXISTS before_"+hist_table+"_update" ;
+    	String query = "create trigger before_" + hist_table + "_update before update on hist_" +
     			table + " for each row begin IF(EXISTS(SELECT * FROM hist_"+table+" where ";
     	int i=0;
     	for(Map.Entry<String,String> entry:pk.entrySet()) {
@@ -409,6 +430,9 @@ public class DatabaseConnection{
     			+ "SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'UPDATE failed due to overlap of dates'; END IF; END";
     	//System.out.println(query);
     	try {
+    		statement = connection.prepareStatement(drop_query);
+    		statement.execute();
+    		
     		statement = connection.prepareStatement(query);
     		statement.execute();
     	}
@@ -1338,8 +1362,192 @@ public class DatabaseConnection{
     	return query;
 	}
 	
+	public ArrayList<Map<String,String>> Coalesce_Operator(Map<String,String> pk,String table,Map<String,String> col) {
+        ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
+        String query = "SELECT DISTINCT f.START_DATE, l.END_DATE";
+        for(Map.Entry<String,String> entry:pk.entrySet()) {
+   			query += ", f."+entry.getKey();
+    	}
+        
+        query += " FROM "+table+" f, "+table+" l WHERE f.START_DATE < l.END_DATE";
+        for(Map.Entry<String,String> entry:pk.entrySet()) {
+            query += " AND f."+entry.getKey()+" = "+entry.getValue()+" AND l."+entry.getKey()+" = "+entry.getValue();
+    	}
+        for(Map.Entry<String,String> entry:col.entrySet()) {
+        	query += " AND f."+entry.getKey()+" = l."+entry.getKey();
+    	}
+        query += " AND NOT EXISTS(SELECT * FROM "+table+" a2 WHERE ";
+        for(Map.Entry<String,String> entry:pk.entrySet()) {
+            query += "f."+entry.getKey()+" = "+entry.getValue()+" AND l."+entry.getKey()+" = "+entry.getValue()+" AND a2."+entry.getKey()+" = "+entry.getValue()+" AND ";
+    	}
+        for(Map.Entry<String,String> entry:col.entrySet()) {
+            query += "a2."+entry.getKey()+" = f."+entry.getKey() + " AND ";
+        }
+        query += "((a2.START_DATE < f.START_DATE AND f.START_DATE <= a2.END_DATE) "
+                + "OR (a2.START_DATE <= l.END_DATE AND l.END_DATE < a2.END_DATE)))";
+       
+        System.out.println(query);
+        resultSet = null;
+        try {
+            statement = connection.prepareStatement(query);
+            resultSet = statement.executeQuery();
+            while(resultSet.next()) {
+                Map<String,String> row = new HashMap<String,String>();
+                for(Map.Entry<String,String> entry:pk.entrySet()) {
+                    row.put(entry.getKey(), resultSet.getString("f."+entry.getKey()));
+                }
+                for(Map.Entry<String,String> entry:col.entrySet()) {
+                    row.put(entry.getKey(), resultSet.getString("f."+entry.getKey()));
+                }
+                row.put("START_DATE", resultSet.getString("f.START_DATE"));
+                row.put("END_DATE", resultSet.getString("l.END_DATE"));
+                result.add(row);
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
 	
+	public ArrayList<Map<String,String>> Overlaps_Operator(String[][] join_info,ArrayList<String> col, Map<String, String> entered_val) {
+		ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
+		String query = "SELECT " + col.get(0);
+    	for(int i=0;i<col.size();i++) {
+   			query += ", " + col.get(i);
+    	}
+    	query += " from "+join_info[0][0]+" INNER JOIN "+ join_info[1][0]
+    			+ " ON " +join_info[0][0]+"."+join_info[0][1]+" = " + join_info[1][0] +"." + join_info[1][1]
+						+ " and (" + join_info[0][0] + ".START_DATE < " + join_info[1][0] + ".END_DATE or "+join_info[1][0]+".END_DATE is NULL) "
+							+ "and ("+join_info[0][0]+".END_DATE > "+join_info[1][0]+".START_DATE or "+join_info[0][0]+".END_DATE is NULL)";
+    	for(Map.Entry<String,String> entry:entered_val.entrySet()) {
+            query += " and "+entry.getKey()+" = "+entry.getValue();
+        }
+		//System.out.println(query);
+        resultSet = null;
+		try {
+            statement = connection.prepareStatement(query);
+            resultSet = statement.executeQuery();
+            while(resultSet.next()) {
+                Map<String,String> row = new HashMap<String,String>();
+                for(int i=0;i<col.size();i++) {
+   		    		row.put(col.get(i),resultSet.getString(col.get(i)));
+   		    	}
+    			result.add(row);
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
 	
+	public ArrayList<Map<String,String>> Difference_Operator(String[][] tables,Map<String,String> pk,String ref_FK) {
+		String query1 = "select" ;
+		int i = 0;
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			if(i==0) {
+				query1 += " T1."+entry.getKey()+" AS "+entry.getKey();
+			}
+			else {
+				query1 += ", T1."+entry.getKey()+" AS "+entry.getKey();
+			}
+        }
+		query1 += ", T1.START_DATE AS START_DATE, A1.START_DATE AS END_DATE from "+tables[0][0]+" AS T1, "+tables[1][0]+" AS A1 where A1."+
+				tables[1][1]+"= "+ref_FK+" AND A1."+tables[1][1]+"= T1."+tables[0][1] + " AND T1.START_DATE < A1.START_DATE AND A1.START_DATE < T1.END_DATE";
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			query1 += " AND T1."+entry.getKey()+" = "+entry.getValue();
+        }
+		query1 += " AND NOT EXISTS ( SELECT * FROM "+tables[1][0]+" AS A2 WHERE T1."+tables[0][1]+ "= A2." + tables[1][1] +" AND "
+				+ "A2."+tables[1][1]+"=" + ref_FK + " AND T1.START_DATE < A2.END_DATE AND A2.START_DATE < A1.START_DATE )";
+		
+		String query2 = "select";
+		i = 0;
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			if(i==0) {
+				query2 += " T1."+entry.getKey()+" AS "+entry.getKey();
+			}
+			else {
+				query2 += ", T1."+entry.getKey()+" AS "+entry.getKey();
+			}
+        }
+		query2 += ", A1.END_DATE AS START_DATE, T1.END_DATE AS END_DATE from "+tables[0][0]+" AS T1, "+tables[1][0]+" AS A1 where A1."+
+				tables[1][1]+"= "+ref_FK+" AND A1."+tables[1][1]+"= T1."+tables[0][1] + " AND T1.START_DATE < A1.START_DATE AND A1.START_DATE < T1.END_DATE";
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			query2 += " AND T1."+entry.getKey()+" = "+entry.getValue();
+        }
+		query2 += " AND NOT EXISTS ( SELECT * FROM "+tables[1][0]+" AS A2 WHERE T1."+tables[0][1]+ "= A2." + tables[1][1] +" AND "
+				+ "A2."+tables[1][1]+"=" + ref_FK + " AND A1.END_DATE < A2.END_DATE AND A2.START_DATE < T1.END_DATE )";
+		
+		String query3 = "select";
+		i = 0;
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			if(i==0) {
+				query3 += " T1."+entry.getKey()+" AS "+entry.getKey();
+			}
+			else {
+				query3 += ", T1."+entry.getKey()+" AS "+entry.getKey();
+			}
+        }
+		query3 += ", A1.END_DATE AS START_DATE, A2.START_DATE AS END_DATE from "+tables[0][0]+" AS T1, "+tables[1][0]+" AS A1, " + tables[1][0]+" AS A2 where A1."+
+				tables[1][1]+"= "+ref_FK+" AND A2." + tables[1][1] +"= "+ref_FK+ 
+				" AND A1."+tables[1][1]+"= T1."+tables[0][1] + 
+				" AND A2."+ tables[1][1]+"= T1."+tables[0][1] +
+				" AND A1.END_DATE < A2.START_DATE AND T1.START_DATE < A1.END_DATE AND A2.START_DATE < T1.END_DATE";
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			query3 += " AND T1."+entry.getKey()+" = "+entry.getValue();
+        }
+		query3 += " AND NOT EXISTS ( SELECT * FROM "+tables[1][0]+" AS A3 WHERE T1."+tables[0][1]+ "= A3." + tables[1][1] +" AND "
+				+ "A3."+tables[1][1]+"=" + ref_FK + " AND A1.END_DATE < A3.END_DATE AND A3.START_DATE < A2.START_DATE )";
+		
+		String query4 = "select ";
+		i = 0;
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			if(i==0) {
+				query4 += entry.getKey();
+			}
+			else {
+				query4 += ", "+entry.getKey();
+			}
+        }
+		query4 += ", START_DATE, END_DATE from "+tables[0][0]+" AS T1 WHERE ";
+		i=0;
+		for(Map.Entry<String,String> entry:pk.entrySet()) {
+			if(i==0) {
+				query4 += "T1."+entry.getKey()+" = "+entry.getValue();
+			}
+			else {
+				query4 += " AND T1."+entry.getKey()+" = "+entry.getValue();
+			}
+        }
+		query4 += " AND NOT EXISTS ( SELECT * FROM "+tables[1][0]+" AS A3 WHERE T1."+tables[0][1]+"=A3."+tables[1][1]+" AND "
+				+ "A3."+tables[1][1]+"="+ref_FK+" AND T1.START_DATE < A3.END_DATE AND A3.START_DATE < T1.END_DATE )";
+		
+		String query = "(" + query1 + ") UNION (" + query2 + ") UNION (" + query3 + ") UNION (" + query4 + ")"; 
+		
+		ArrayList<Map<String,String>> result = new ArrayList<Map<String,String>>();
+		
+		System.out.println(query);
+        resultSet = null;
+		try {
+            statement = connection.prepareStatement(query);
+            resultSet = statement.executeQuery();
+            while(resultSet.next()) {
+                Map<String,String> row = new HashMap<String,String>();
+                for(Map.Entry<String,String> entry:pk.entrySet()) {
+        			row.put(tables[0][0]+"."+entry.getKey(),resultSet.getString(entry.getKey()));
+                }
+                row.put("START_DATE",resultSet.getString("START_DATE"));
+                row.put("END_DATE",resultSet.getString("END_DATE"));
+    			result.add(row);
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return result;
+	}
+
     public void closeConnection() {
     	try {
     		if(connection!=null) {
@@ -1350,5 +1558,4 @@ public class DatabaseConnection{
     		s.printStackTrace();
     	}
     }
-    
 }

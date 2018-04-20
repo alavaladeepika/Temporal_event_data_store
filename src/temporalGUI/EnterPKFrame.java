@@ -24,6 +24,7 @@ public class EnterPKFrame {
 	Map<String, String> pk = new HashMap<String,String>();
 	String selTable=null,selCol=null,selColType=null;
 	Map<String, String> pkVal = new HashMap<String,String>();
+	Map<String,String> selCols = new HashMap<String,String>();
 
 	/**
 	 * Create the application.
@@ -31,6 +32,7 @@ public class EnterPKFrame {
 	public EnterPKFrame(String table,Map<String,String> col,String c) {
 		choice = c;
 		selTable = table;
+		selCols = col;
 		for(Map.Entry<String,String> entry:col.entrySet()){
 			selColType = entry.getValue();
 			selCol = entry.getKey();
@@ -107,6 +109,18 @@ public class EnterPKFrame {
 				 	case "this_timestampname":
 				 		@SuppressWarnings("unused")
 				 		EnterColValFrame tn = new EnterColValFrame(pkVal,selTable,selCol,selColType,choice);
+				 		break;
+				 	case "overlaps":
+				 		//@SuppressWarnings("unused") 
+				 		//ResultFrame or = new ResultFrame(DatabaseConnection.getInstance().);
+				 		break;
+				 	case "coalesce":
+				 		@SuppressWarnings("unused") 
+				 		ResultFrame cr = new ResultFrame(DatabaseConnection.getInstance().Coalesce_Operator(pkVal,"hist_"+selTable, selCols));
+				 		break;
+				 	case "difference":
+				 		//@SuppressWarnings("unused") 
+				 		//ResultFrame dr = new ResultFrame(DatabaseConnection.getInstance().;
 				 		break;
 				 	default:
 				 		break;
