@@ -105,24 +105,24 @@ public class UpdateFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(518, Short.MAX_VALUE))
+					.addContainerGap(531, Short.MAX_VALUE))
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(427)
-					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(402)
+					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, 73, Short.MAX_VALUE)
+					.addGap(398)
 					.addComponent(btnNext)
-					.addGap(32))
+					.addGap(36))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addGap(896)
+					.addGap(811)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNext)
-						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addGap(28))
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNext))
+					.addGap(85))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		y+=50;

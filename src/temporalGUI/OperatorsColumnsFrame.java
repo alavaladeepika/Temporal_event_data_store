@@ -76,28 +76,28 @@ public class OperatorsColumnsFrame {
 		btnMenu = new JButton("Menu");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
+			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblSelectTheColumns)
-					.addContainerGap(434, Short.MAX_VALUE))
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-					.addGap(221)
+					.addContainerGap(380, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(223)
 					.addComponent(btnMenu, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 607, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 604, Short.MAX_VALUE)
 					.addComponent(btnNext)
-					.addGap(23))
+					.addGap(24))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(23)
 					.addComponent(lblSelectTheColumns)
-					.addGap(880)
+					.addGap(821)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(btnNext))
-					.addGap(57))
+					.addGap(86))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		

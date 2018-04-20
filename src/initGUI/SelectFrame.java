@@ -80,24 +80,24 @@ public class SelectFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(803, Short.MAX_VALUE))
+					.addContainerGap(810, Short.MAX_VALUE))
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(473)
-					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(312)
+					.addGap(463)
+					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+					.addGap(318)
 					.addComponent(btnNext)
-					.addGap(76))
+					.addGap(80))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addGap(896)
+					.addGap(786)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNext)
-						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addGap(28))
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNext))
+					.addGap(110))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		

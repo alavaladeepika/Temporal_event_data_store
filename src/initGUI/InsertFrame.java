@@ -9,7 +9,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 import dbResource.DatabaseConnection;
 public class InsertFrame {
@@ -78,26 +77,24 @@ public class InsertFrame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(26)
 					.addComponent(lblEnterValuesTo)
-					.addContainerGap(804, Short.MAX_VALUE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(486)
-					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(343)
+					.addContainerGap(810, Short.MAX_VALUE))
+				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+					.addGap(456)
+					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+					.addGap(367)
 					.addComponent(btnNext)
-					.addGap(32))
+					.addGap(38))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(36)
 					.addComponent(lblEnterValuesTo)
-					.addPreferredGap(ComponentPlacement.RELATED, 896, Short.MAX_VALUE)
-					.addComponent(btnNext)
-					.addGap(28))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(945)
-					.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(30))
+					.addGap(769)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNext))
+					.addGap(127))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 		

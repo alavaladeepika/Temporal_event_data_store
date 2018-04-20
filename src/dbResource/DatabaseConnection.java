@@ -1386,7 +1386,7 @@ public class DatabaseConnection{
         query += "((a2.START_DATE < f.START_DATE AND f.START_DATE <= a2.END_DATE) "
                 + "OR (a2.START_DATE <= l.END_DATE AND l.END_DATE < a2.END_DATE)))";
        
-        System.out.println(query);
+        //System.out.println(query);
         resultSet = null;
         try {
             statement = connection.prepareStatement(query);

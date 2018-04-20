@@ -55,14 +55,10 @@ public class Temporal_Join {
 	}
 
 	public ArrayList<Map<String, String>> perform_overlaps(ArrayList<String> col, Map<String, String> entered_val) {
-		if(i==1) {
-			col.add(join_info[0][0]+".START_DATE");
-			col.add(join_info[0][0]+".END_DATE");
-		}
-		if(j==1) {
-			col.add(join_info[1][0]+".START_DATE");
-			col.add(join_info[1][0]+".END_DATE");
-		}
+		col.add(join_info[0][0]+".START_DATE");
+		col.add(join_info[0][0]+".END_DATE");
+		col.add(join_info[1][0]+".START_DATE");
+		col.add(join_info[1][0]+".END_DATE");
 		return DatabaseConnection.getInstance().Overlaps_Operator(join_info,col,entered_val);
 	}
 }
