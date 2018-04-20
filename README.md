@@ -76,9 +76,8 @@ Select a table on which coalesce is to be performed. If for one or more rows, th
 ->Difference Opeartor:
 Display the start date , end date and the primary key of the referencing table where the start and end dates are difference of start and end dates of the corresponding tuples in both the tables
 Eg:        
-			T1
-		 |-----------------------)
-		 						T2
+		
+		|-----------------------)    
 		                   |--------------------)
 		 <---difference--->              
 		               
