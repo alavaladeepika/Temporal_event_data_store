@@ -101,8 +101,8 @@ public class JoinTablesFrame {
 		group = new ButtonGroup();
         jRadioButton = new JRadioButton[displayTables.size()];
         for(int i=0; i<displayTables.size(); i++, y+=40) {
-        	String pair = "REFERENCING TABLE: '" + displayTables.get(i)[0][0] + 
-        			"' AND REFERENCED TABLE: '" + displayTables.get(i)[1][0] + "'";
+        	String pair = "'" + displayTables.get(i)[0][0] + "'('" + displayTables.get(i)[0][1] + "') --> '" 
+        							+ displayTables.get(i)[1][0] + "'('" + displayTables.get(i)[1][1] + "')";
             jRadioButton[i] = new JRadioButton(pair);
             jRadioButton[i].setBounds(x, y, width, height);
             group.add(jRadioButton[i]);
